@@ -3,7 +3,7 @@ import Chat from './Chat';
 import Login from './Login';
 import Cart from './Cart';
 import Preferences from './Preferences';
-import { sendMessage, isMockMode, validateSession, addToCart, getCart } from './api';
+import { sendMessage, isMockMode, toggleMockMode, validateSession, addToCart, getCart } from './api';
 
 const WELCOME_MESSAGE = {
   role: 'assistant',
@@ -135,6 +135,9 @@ function App() {
           </button>
           <button className="nav-btn cart-nav-btn" onClick={() => setView('cart')} title="Cart">
             Cart{cartItems.length > 0 && <span className="cart-badge">{cartItems.length}</span>}
+          </button>
+          <button className="nav-btn" onClick={toggleMockMode} title="Toggle mock mode">
+            {isMockMode() ? 'Live' : 'Mock'}
           </button>
           <button className="clear-btn" onClick={handleClear} title="New chat">
             New
