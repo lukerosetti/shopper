@@ -66,13 +66,13 @@ function Preferences({ onBack }) {
   return (
     <div className="prefs-view">
       <div className="prefs-header">
-        <button className="prefs-back" onClick={onBack}>← Back</button>
+        <button className="prefs-back" onClick={onBack}>‹ Back</button>
         <h2>My Style Profile</h2>
       </div>
 
       <div className="prefs-form">
         <div className="prefs-card">
-          <div className="prefs-card-title">📏 My Sizes</div>
+          <div className="prefs-card-title">— My Sizes</div>
           <div className="prefs-size-grid">
             <div className="prefs-size-item">
               <span className="prefs-size-label">Tops</span>
@@ -90,20 +90,20 @@ function Preferences({ onBack }) {
         </div>
 
         <div className="prefs-card">
-          <div className="prefs-card-title">✨ Style & Taste</div>
-          <PrefsField icon="👗" label="My Style" placeholder="e.g. casual, boho, minimalist" value={prefs.styles} onChange={e => setPrefs(p => ({ ...p, styles: e.target.value }))} />
-          <PrefsField icon="🎨" label="Favorite Colors" placeholder="e.g. sage green, black, cream" value={prefs.colors} onChange={e => setPrefs(p => ({ ...p, colors: e.target.value }))} />
-          <PrefsField icon="💰" label="Budget Range" placeholder="e.g. $25-75" value={prefs.budgetRange} onChange={e => setPrefs(p => ({ ...p, budgetRange: e.target.value }))} />
+          <div className="prefs-card-title">— Style & Taste</div>
+          <PrefsField icon="◇" label="My Style" placeholder="e.g. casual, boho, minimalist" value={prefs.styles} onChange={e => setPrefs(p => ({ ...p, styles: e.target.value }))} />
+          <PrefsField icon="○" label="Favorite Colors" placeholder="e.g. sage green, black, cream" value={prefs.colors} onChange={e => setPrefs(p => ({ ...p, colors: e.target.value }))} />
+          <PrefsField icon="·" label="Budget Range" placeholder="e.g. $25-75" value={prefs.budgetRange} onChange={e => setPrefs(p => ({ ...p, budgetRange: e.target.value }))} />
         </div>
 
         <div className="prefs-card">
-          <div className="prefs-card-title">🛍 Shopping Preferences</div>
-          <PrefsField icon="💚" label="Favorite Stores" placeholder="e.g. Zara, H&M, Nordstrom" value={prefs.favoriteStores} onChange={e => setPrefs(p => ({ ...p, favoriteStores: e.target.value }))} />
-          <PrefsField icon="🚫" label="Brands to Avoid" placeholder="e.g. Shein, Forever 21" value={prefs.avoidBrands} onChange={e => setPrefs(p => ({ ...p, avoidBrands: e.target.value }))} />
+          <div className="prefs-card-title">— Shopping Preferences</div>
+          <PrefsField icon="□" label="Favorite Stores" placeholder="e.g. Zara, H&M, Nordstrom" value={prefs.favoriteStores} onChange={e => setPrefs(p => ({ ...p, favoriteStores: e.target.value }))} />
+          <PrefsField icon="×" label="Brands to Avoid" placeholder="e.g. Shein, Forever 21" value={prefs.avoidBrands} onChange={e => setPrefs(p => ({ ...p, avoidBrands: e.target.value }))} />
         </div>
 
         <div className="prefs-card">
-          <div className="prefs-card-title">📝 Anything Else</div>
+          <div className="prefs-card-title">— Anything Else</div>
           <textarea
             className="prefs-notes-input"
             placeholder="e.g. Prefers cotton, no polyester, likes oversized fits, petite frame"

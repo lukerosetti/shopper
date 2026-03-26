@@ -800,6 +800,7 @@ body {
   align-items: center;
   gap: 12px;
   padding: 16px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
   background: #FFFFFF;
   border-bottom: 1px solid var(--card-border);
   box-shadow: 0 1px 4px rgba(0,0,0,0.03);
@@ -1017,6 +1018,7 @@ body {
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
   background: #FFFFFF;
   border-bottom: 1px solid var(--card-border);
 }

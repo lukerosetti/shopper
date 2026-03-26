@@ -101,13 +101,13 @@ function ProductCard({ product, onAddToCart, onAddToWishlist, onFeedback }) {
             onClick={() => handleVote(true)}
             disabled={vote !== null}
             title="I like this"
-          >👍</button>
+          >▲</button>
           <button
             className={`feedback-btn feedback-down ${vote === 'down' ? 'active' : ''}`}
             onClick={() => handleVote(false)}
             disabled={vote !== null}
             title="Not for me"
-          >👎</button>
+          >▼</button>
           {vote && <span className="feedback-label">{vote === 'up' ? 'Noted!' : 'Got it!'}</span>}
         </div>
       </div>

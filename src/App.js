@@ -21,12 +21,12 @@ const GREETINGS = [
 ];
 
 const QUICK_PROMPTS = [
-  { icon: '👗', label: 'Date night outfit', text: "I need a date night outfit" },
-  { icon: '👟', label: 'Comfy shoes', text: "I'm looking for comfortable everyday shoes" },
-  { icon: '👜', label: 'New bag', text: "Help me find a cute bag" },
-  { icon: '☀️', label: 'Summer looks', text: "Show me trendy summer outfits" },
-  { icon: '💼', label: 'Work clothes', text: "I need professional work clothes" },
-  { icon: '🏷️', label: 'Deals under $30', text: "Find me cute clothes under $30" },
+  { icon: '◇', label: 'Date night outfit', text: "I need a date night outfit" },
+  { icon: '○', label: 'Comfy shoes', text: "I'm looking for comfortable everyday shoes" },
+  { icon: '△', label: 'New bag', text: "Help me find a cute bag" },
+  { icon: '·', label: 'Summer looks', text: "Show me trendy summer outfits" },
+  { icon: '□', label: 'Work clothes', text: "I need professional work clothes" },
+  { icon: '—', label: 'Deals under $30', text: "Find me cute clothes under $30" },
 ];
 
 function getRandomGreeting() {
@@ -274,10 +274,10 @@ function App() {
         <div className="header-right">
           {isMockMode() && <span className="mock-badge">MOCK</span>}
           <button className="nav-btn cart-nav-btn" onClick={() => setView('cart')} title="Cart">
-            🛒{cartItems.length > 0 && <span className="cart-badge">{cartItems.length}</span>}
+            +{cartItems.length > 0 && <span className="cart-badge">{cartItems.length}</span>}
           </button>
           <button className="menu-btn" onClick={() => setMenuOpen(true)} title="Menu">
-            ☰
+            ≡
           </button>
         </div>
       </header>
@@ -288,34 +288,34 @@ function App() {
           <div className="side-nav">
             <div className="side-nav-header">
               <h2>Menu</h2>
-              <button className="side-nav-close" onClick={() => setMenuOpen(false)}>✕</button>
+              <button className="side-nav-close" onClick={() => setMenuOpen(false)}>×</button>
             </div>
             <div className="side-nav-items">
               <button className="side-nav-item" onClick={() => { handleClear(); setMenuOpen(false); }}>
-                <span className="nav-icon">✨</span> New Chat
+                <span className="nav-icon">+</span> New Chat
               </button>
               <button className="side-nav-item" onClick={() => { setView('history'); setMenuOpen(false); }}>
-                <span className="nav-icon">📋</span> Chat History
+                <span className="nav-icon">≡</span> Chat History
               </button>
               <button className="side-nav-item" onClick={() => { setView('prefs'); setMenuOpen(false); }}>
-                <span className="nav-icon">👤</span> My Preferences
+                <span className="nav-icon">◎</span> My Preferences
               </button>
               <button className="side-nav-item" onClick={() => { setView('wishlist'); setMenuOpen(false); }}>
                 <span className="nav-icon">♡</span> Wishlist
               </button>
               <button className="side-nav-item" onClick={() => { setView('cart'); setMenuOpen(false); }}>
-                <span className="nav-icon">🛒</span> Shopping Cart
+                <span className="nav-icon">+</span> Shopping Cart
                 {cartItems.length > 0 && <span className="nav-badge">{cartItems.length}</span>}
               </button>
               <button className="side-nav-item" onClick={() => { setDarkMode(d => !d); }}>
-                <span className="nav-icon">{darkMode ? '☀️' : '🌙'}</span> {darkMode ? 'Light Mode' : 'Dark Mode'}
+                <span className="nav-icon">{darkMode ? '○' : '●'}</span> {darkMode ? 'Light Mode' : 'Dark Mode'}
               </button>
             </div>
             <div className="side-nav-footer">
               <div className="side-nav-mock">
                 Mode:
                 <button className="side-nav-mock-btn" onClick={toggleMockMode}>
-                  {isMockMode() ? '🟡 Mock' : '🟢 Live'}
+                  {isMockMode() ? '○ Mock' : '● Live'}
                 </button>
               </div>
             </div>
