@@ -32,6 +32,18 @@ function Cart({ onBack, cartItems, setCartItems }) {
       <div className="cart-header">
         <button className="cart-back" onClick={onBack}>Back</button>
         <h2>Cart ({cartItems.length})</h2>
+        {cartItems.length > 0 && (
+          <button className="share-btn" onClick={() => {
+            const text = cartItems.map(item =>
+              `${item.name} - ${item.price || ''} (${item.store || ''})\n${item.url || ''}`
+            ).join('\n\n');
+            if (navigator.share) {
+              navigator.share({ title: 'My Shopping Cart', text }).catch(() => {});
+            } else {
+              navigator.clipboard.writeText(text).then(() => alert('Cart copied to clipboard!'));
+            }
+          }}>Share</button>
+        )}
       </div>
 
       {cartItems.length === 0 ? (

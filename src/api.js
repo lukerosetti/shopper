@@ -220,3 +220,114 @@ export async function resetPreferences() {
   if (!res.ok) throw new Error('Failed to reset');
   return res.json();
 }
+
+// Chat History
+export async function getChatHistory() {
+  if (MOCK_MODE) {
+    return JSON.parse(localStorage.getItem('mockHistory') || '[]');
+  }
+  const res = await fetch('/api/history', { headers: authHeaders() });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function saveChatHistory(id, title, messages) {
+  if (MOCK_MODE) {
+    const history = JSON.parse(localStorage.getItem('mockHistory') || '[]');
+    const entry = { id, title, messages, messageCount: messages.length, savedAt: new Date().toISOString() };
+    const existing = history.findIndex(c => c.id === id);
+    if (existing >= 0) history[existing] = entry;
+    else history.unshift(entry);
+    localStorage.setItem('mockHistory', JSON.stringify(history.slice(0, 20)));
+    return { success: true, chats: history };
+  }
+  const res = await fetch('/api/history', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ id, title, messages }),
+  });
+  if (!res.ok) throw new Error('Failed to save');
+  return res.json();
+}
+
+export async function deleteChatHistory(id) {
+  if (MOCK_MODE) {
+    let history = JSON.parse(localStorage.getItem('mockHistory') || '[]');
+    if (id) history = history.filter(c => c.id !== id);
+    else history = [];
+    localStorage.setItem('mockHistory', JSON.stringify(history));
+    return { success: true, chats: history };
+  }
+  const res = await fetch('/api/history', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ id }),
+  });
+  if (!res.ok) throw new Error('Failed to delete');
+  return res.json();
+}
+
+// Wishlist
+export async function getWishlist() {
+  if (MOCK_MODE) {
+    return JSON.parse(localStorage.getItem('mockWishlist') || '[]');
+  }
+  const res = await fetch('/api/wishlist', { headers: authHeaders() });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function addToWishlist(item) {
+  if (MOCK_MODE) {
+    const wishlist = JSON.parse(localStorage.getItem('mockWishlist') || '[]');
+    item.id = Math.random().toString(36).slice(2);
+    item.addedAt = new Date().toISOString();
+    wishlist.push(item);
+    localStorage.setItem('mockWishlist', JSON.stringify(wishlist));
+    return { success: true, wishlist };
+  }
+  const res = await fetch('/api/wishlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify(item),
+  });
+  if (!res.ok) throw new Error('Failed to add');
+  return res.json();
+}
+
+export async function removeFromWishlist(id) {
+  if (MOCK_MODE) {
+    let wishlist = JSON.parse(localStorage.getItem('mockWishlist') || '[]');
+    wishlist = wishlist.filter(i => i.id !== id);
+    localStorage.setItem('mockWishlist', JSON.stringify(wishlist));
+    return { success: true, wishlist };
+  }
+  const res = await fetch('/api/wishlist', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ id }),
+  });
+  if (!res.ok) throw new Error('Failed to remove');
+  return res.json();
+}
+
+export async function moveWishlistToCart(id) {
+  if (MOCK_MODE) {
+    let wishlist = JSON.parse(localStorage.getItem('mockWishlist') || '[]');
+    const item = wishlist.find(i => i.id === id);
+    if (!item) throw new Error('Not found');
+    wishlist = wishlist.filter(i => i.id !== id);
+    localStorage.setItem('mockWishlist', JSON.stringify(wishlist));
+    const cart = JSON.parse(localStorage.getItem('mockCart') || '[]');
+    cart.push({ ...item, id: Math.random().toString(36).slice(2), addedAt: new Date().toISOString() });
+    localStorage.setItem('mockCart', JSON.stringify(cart));
+    return { success: true, wishlist, cart };
+  }
+  const res = await fetch('/api/wishlist', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ id }),
+  });
+  if (!res.ok) throw new Error('Failed to move');
+  return res.json();
+}

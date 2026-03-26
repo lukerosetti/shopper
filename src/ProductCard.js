@@ -32,10 +32,11 @@ function proxyImageUrl(url) {
   return `/api/image?url=${encodeURIComponent(url)}`;
 }
 
-function ProductCard({ product, onAddToCart, onFeedback }) {
+function ProductCard({ product, onAddToCart, onAddToWishlist, onFeedback }) {
   const [imgError, setImgError] = React.useState(false);
   const [added, setAdded] = React.useState(false);
   const [adding, setAdding] = React.useState(false);
+  const [wishlisted, setWishlisted] = React.useState(false);
   const [vote, setVote] = React.useState(null); // null, 'up', 'down'
   const imageSource = product.url || product.image;
   const proxiedImage = proxyImageUrl(imageSource);
@@ -80,6 +81,18 @@ function ProductCard({ product, onAddToCart, onFeedback }) {
           )}
           <button className={`add-cart-btn ${added ? 'added' : ''}`} onClick={handleAdd} disabled={added || adding}>
             {adding ? 'Adding...' : added ? 'Added!' : 'Add to Cart'}
+          </button>
+          <button
+            className={`wishlist-btn ${wishlisted ? 'wishlisted' : ''}`}
+            onClick={async () => {
+              if (onAddToWishlist && !wishlisted) {
+                const ok = await onAddToWishlist(product);
+                if (ok) setWishlisted(true);
+              }
+            }}
+            disabled={wishlisted}
+          >
+            {wishlisted ? '♥ Saved' : '♡ Save'}
           </button>
         </div>
         <div className="product-feedback">

@@ -1,9 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Chat from './Chat';
 import Login from './Login';
 import Cart from './Cart';
 import Preferences from './Preferences';
-import { sendMessage, isMockMode, toggleMockMode, validateSession, addToCart, getCart, saveFeedback } from './api';
+import Wishlist from './Wishlist';
+import ChatHistory from './ChatHistory';
+import { sendMessage, isMockMode, toggleMockMode, validateSession, addToCart, getCart, saveFeedback, addToWishlist, saveChatHistory } from './api';
 
 const GREETINGS = [
   "Hey Brooke! What are we hunting for today?",
@@ -18,6 +20,15 @@ const GREETINGS = [
   "Hey there, Brooke! What sounds good today?",
 ];
 
+const QUICK_PROMPTS = [
+  { icon: '👗', label: 'Date night outfit', text: "I need a date night outfit" },
+  { icon: '👟', label: 'Comfy shoes', text: "I'm looking for comfortable everyday shoes" },
+  { icon: '👜', label: 'New bag', text: "Help me find a cute bag" },
+  { icon: '☀️', label: 'Summer looks', text: "Show me trendy summer outfits" },
+  { icon: '💼', label: 'Work clothes', text: "I need professional work clothes" },
+  { icon: '🏷️', label: 'Deals under $30', text: "Find me cute clothes under $30" },
+];
+
 function getRandomGreeting() {
   return GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
 }
@@ -30,14 +41,22 @@ const WELCOME_MESSAGE = {
 function App() {
   const [authed, setAuthed] = useState(false);
   const [authChecking, setAuthChecking] = useState(true);
-  const [view, setView] = useState('chat'); // chat, cart, prefs
+  const [view, setView] = useState('chat'); // chat, cart, prefs, wishlist, history
   const [messages, setMessages] = useState([WELCOME_MESSAGE]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [greeting] = useState(getRandomGreeting);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('shopperDarkMode') === 'true');
+  const [chatId] = useState(() => Date.now().toString(36));
   const inputRef = useRef(null);
+
+  // Apply dark mode
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    localStorage.setItem('shopperDarkMode', darkMode ? 'true' : 'false');
+  }, [darkMode]);
 
   useEffect(() => {
     if (isMockMode()) {
@@ -62,15 +81,11 @@ function App() {
     const vv = window.visualViewport;
     if (!vv) return;
     const onResize = () => {
-      // On iOS, when keyboard opens the visual viewport shrinks
-      // but the layout viewport stays the same. We need to keep
-      // the page scrolled to top so the header stays visible.
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
     };
     const onScroll = () => {
-      // Prevent iOS from scrolling the entire page up
       window.scrollTo(0, 0);
     };
     vv.addEventListener('resize', onResize);
@@ -80,6 +95,21 @@ function App() {
       vv.removeEventListener('scroll', onScroll);
     };
   }, []);
+
+  // Auto-save chat history when messages change (if more than just welcome)
+  const saveChat = useCallback(() => {
+    if (messages.length > 2) {
+      const title = messages.find(m => m.role === 'user')?.content?.slice(0, 50) || 'Chat';
+      saveChatHistory(chatId, title, messages).catch(() => {});
+    }
+  }, [messages, chatId]);
+
+  useEffect(() => {
+    if (messages.length > 2) {
+      const timeout = setTimeout(saveChat, 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [messages, saveChat]);
 
   const handleLogin = (token) => {
     setAuthed(true);
@@ -101,8 +131,23 @@ function App() {
     }
   };
 
-  const handleSend = async () => {
-    const text = input.trim();
+  const handleAddToWishlist = async (product) => {
+    try {
+      await addToWishlist({
+        name: product.name,
+        price: product.price,
+        store: product.store,
+        url: product.url,
+        imageUrl: product.image,
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleSend = async (textOverride) => {
+    const text = (textOverride || input).trim();
     if (!text || isLoading) return;
 
     const userMessage = { role: 'user', content: text };
@@ -144,18 +189,17 @@ function App() {
         liked,
       });
     } catch {
-      // Silent fail — feedback is non-critical
+      // Silent fail
     }
   };
 
   const handleRetry = () => {
-    // Remove the error message and resend the last user message
     setMessages(prev => {
       const withoutError = prev.filter(m => !m.isError);
       const lastUserMsg = [...withoutError].reverse().find(m => m.role === 'user');
       if (lastUserMsg) {
         setInput(lastUserMsg.content);
-        return withoutError.slice(0, -1); // remove last user message too, handleSend will re-add it
+        return withoutError.slice(0, -1);
       }
       return withoutError;
     });
@@ -164,6 +208,15 @@ function App() {
   const handleClear = () => {
     setMessages([WELCOME_MESSAGE]);
     setInput('');
+  };
+
+  const handleLoadChat = (chat) => {
+    setMessages(chat.messages);
+    setView('chat');
+  };
+
+  const handleQuickPrompt = (text) => {
+    handleSend(text);
   };
 
   if (authChecking) {
@@ -186,6 +239,22 @@ function App() {
     return (
       <div className="app">
         <Preferences onBack={() => setView('chat')} />
+      </div>
+    );
+  }
+
+  if (view === 'wishlist') {
+    return (
+      <div className="app">
+        <Wishlist onBack={() => setView('chat')} setCartItems={setCartItems} />
+      </div>
+    );
+  }
+
+  if (view === 'history') {
+    return (
+      <div className="app">
+        <ChatHistory onBack={() => setView('chat')} onLoadChat={handleLoadChat} />
       </div>
     );
   }
@@ -225,12 +294,21 @@ function App() {
               <button className="side-nav-item" onClick={() => { handleClear(); setMenuOpen(false); }}>
                 <span className="nav-icon">✨</span> New Chat
               </button>
+              <button className="side-nav-item" onClick={() => { setView('history'); setMenuOpen(false); }}>
+                <span className="nav-icon">📋</span> Chat History
+              </button>
               <button className="side-nav-item" onClick={() => { setView('prefs'); setMenuOpen(false); }}>
                 <span className="nav-icon">👤</span> My Preferences
+              </button>
+              <button className="side-nav-item" onClick={() => { setView('wishlist'); setMenuOpen(false); }}>
+                <span className="nav-icon">♡</span> Wishlist
               </button>
               <button className="side-nav-item" onClick={() => { setView('cart'); setMenuOpen(false); }}>
                 <span className="nav-icon">🛒</span> Shopping Cart
                 {cartItems.length > 0 && <span className="nav-badge">{cartItems.length}</span>}
+              </button>
+              <button className="side-nav-item" onClick={() => { setDarkMode(d => !d); }}>
+                <span className="nav-icon">{darkMode ? '☀️' : '🌙'}</span> {darkMode ? 'Light Mode' : 'Dark Mode'}
               </button>
             </div>
             <div className="side-nav-footer">
@@ -245,7 +323,16 @@ function App() {
         </>
       )}
 
-      <Chat messages={messages} isLoading={isLoading} onAddToCart={handleAddToCart} onFeedback={handleFeedback} onRetry={handleRetry} />
+      <Chat
+        messages={messages}
+        isLoading={isLoading}
+        onAddToCart={handleAddToCart}
+        onAddToWishlist={handleAddToWishlist}
+        onFeedback={handleFeedback}
+        onRetry={handleRetry}
+        quickPrompts={QUICK_PROMPTS}
+        onQuickPrompt={handleQuickPrompt}
+      />
 
       <div className="input-bar">
         <input
@@ -259,7 +346,7 @@ function App() {
           placeholder="What are you looking for?"
           disabled={isLoading}
         />
-        <button onClick={handleSend} disabled={!input.trim() || isLoading} className="send-btn">
+        <button onClick={() => handleSend()} disabled={!input.trim() || isLoading} className="send-btn">
           Send
         </button>
       </div>

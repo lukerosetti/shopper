@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import ProductCard, { parseProducts, getTextWithoutProducts } from './ProductCard';
 
-function ChatMessage({ message, onAddToCart, onFeedback, onRetry }) {
+function ChatMessage({ message, onAddToCart, onAddToWishlist, onFeedback, onRetry }) {
   if (message.role === 'user') {
     return (
       <div className="message user-message fade-in">
@@ -27,7 +27,7 @@ function ChatMessage({ message, onAddToCart, onFeedback, onRetry }) {
         <div className="products-carousel">
           <div className="products-carousel-track">
             {products.map((product, i) => (
-              <ProductCard key={i} product={product} onAddToCart={onAddToCart} onFeedback={onFeedback} />
+              <ProductCard key={i} product={product} onAddToCart={onAddToCart} onAddToWishlist={onAddToWishlist} onFeedback={onFeedback} />
             ))}
           </div>
           <div className="carousel-hint">swipe for more →</div>
@@ -37,7 +37,7 @@ function ChatMessage({ message, onAddToCart, onFeedback, onRetry }) {
   );
 }
 
-function Chat({ messages, isLoading, onAddToCart, onFeedback, onRetry }) {
+function Chat({ messages, isLoading, onAddToCart, onAddToWishlist, onFeedback, onRetry, quickPrompts, onQuickPrompt }) {
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -47,8 +47,18 @@ function Chat({ messages, isLoading, onAddToCart, onFeedback, onRetry }) {
   return (
     <div className="chat-area">
       {messages.length === 0 && <div className="chat-empty-spacer" />}
+      {messages.length <= 1 && quickPrompts && (
+        <div className="quick-prompts">
+          {quickPrompts.map((prompt, i) => (
+            <button key={i} className="quick-prompt-btn" onClick={() => onQuickPrompt(prompt.text)}>
+              <span className="quick-prompt-icon">{prompt.icon}</span>
+              <span className="quick-prompt-text">{prompt.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
       {messages.map((msg, i) => (
-        <ChatMessage key={i} message={msg} onAddToCart={onAddToCart} onFeedback={onFeedback} onRetry={msg.isError ? onRetry : null} />
+        <ChatMessage key={i} message={msg} onAddToCart={onAddToCart} onAddToWishlist={onAddToWishlist} onFeedback={onFeedback} onRetry={msg.isError ? onRetry : null} />
       ))}
       {isLoading && (
         <div className="message ai-message">
