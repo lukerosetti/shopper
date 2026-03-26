@@ -46,6 +46,7 @@ function Chat({ messages, isLoading, onAddToCart, onFeedback, onRetry }) {
 
   return (
     <div className="chat-area">
+      {messages.length === 0 && <div className="chat-empty-spacer" />}
       {messages.map((msg, i) => (
         <ChatMessage key={i} message={msg} onAddToCart={onAddToCart} onFeedback={onFeedback} onRetry={msg.isError ? onRetry : null} />
       ))}

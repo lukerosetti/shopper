@@ -340,6 +340,7 @@ body {
   flex-direction: column;
   gap: 14px;
   -webkit-overflow-scrolling: touch;
+  min-height: 0;
   background:
     radial-gradient(ellipse at 15% 20%, rgba(163, 184, 140, 0.08) 0%, transparent 50%),
     radial-gradient(ellipse at 85% 60%, rgba(232, 168, 124, 0.06) 0%, transparent 50%),
@@ -524,6 +525,12 @@ body {
   background: #D9956B;
   color: #FFFFFF;
   box-shadow: 0 4px 10px rgba(232, 168, 124, 0.35);
+}
+
+/* Empty chat spacer for scroll feel */
+.chat-empty-spacer {
+  min-height: calc(100% + 40px);
+  flex-shrink: 0;
 }
 
 /* Input Bar */
