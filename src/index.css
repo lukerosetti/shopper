@@ -1,24 +1,26 @@
 :root {
-  --bg: #F5F5F0;
-  --bg2: #1A1A1A;
+  --bg: #FDF8F4;
+  --bg2: #4A3F38;
   --card: #FFFFFF;
-  --card-border: #E5E5E0;
-  --text: #1A1A1A;
-  --text-dim: #999990;
-  --accent: #7C8C6E;
-  --accent-dim: rgba(124, 140, 110, 0.12);
-  --btn: #3D3D3D;
+  --card-border: #EDE6DF;
+  --text: #3A3330;
+  --text-dim: #B0A49A;
+  --accent: #E8A87C;
+  --accent-dim: rgba(232, 168, 124, 0.12);
+  --secondary: #8FA880;
+  --secondary-dim: rgba(143, 168, 128, 0.12);
+  --btn: #E8A87C;
   --btn-text: #FFFFFF;
-  --green: #7C8C6E;
-  --green-dim: rgba(124, 140, 110, 0.12);
-  --purple: #7C8C6E;
-  --user-bubble: #3D3D3D;
+  --green: #8FA880;
+  --green-dim: rgba(143, 168, 128, 0.12);
+  --purple: #E8A87C;
+  --user-bubble: #E8A87C;
   --ai-bubble: #FFFFFF;
   --input-bg: #FFFFFF;
-  --input-border: #E0E0DB;
-  --radius: 12px;
+  --input-border: #E8E0D8;
+  --radius: 14px;
   --header-text: #FFFFFF;
-  --red: #C45D4D;
+  --red: #D4806A;
 }
 
 * {
@@ -74,7 +76,7 @@ body {
   font-size: 10px;
   font-weight: 600;
   color: var(--accent);
-  background: rgba(124, 140, 110, 0.2);
+  background: rgba(232, 168, 124, 0.25);
   padding: 2px 6px;
   border-radius: 4px;
   text-transform: uppercase;
@@ -215,7 +217,7 @@ body {
   width: 100%;
   height: 140px;
   overflow: hidden;
-  background: #ECECEA;
+  background: #F3EDE8;
 }
 
 .product-image img {
@@ -262,13 +264,13 @@ body {
   color: #FFFFFF;
   text-decoration: none;
   padding: 6px 12px;
-  background: var(--btn);
-  border-radius: 6px;
+  background: var(--accent);
+  border-radius: 8px;
   transition: all 0.2s;
 }
 
 .product-link:hover {
-  background: #2A2A2A;
+  background: #D9956B;
   color: #FFFFFF;
 }
 
@@ -304,7 +306,7 @@ body {
 }
 
 .send-btn {
-  background: var(--accent);
+  background: var(--secondary);
   color: #FFFFFF;
   border: none;
   border-radius: 10px;
@@ -349,7 +351,7 @@ body {
 
 /* Nav buttons */
 .nav-btn {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.12);
   color: rgba(255,255,255,0.7);
   border: 1px solid rgba(255,255,255,0.15);
   padding: 6px 10px;
@@ -365,7 +367,7 @@ body {
 .nav-btn:hover {
   color: #FFFFFF;
   border-color: var(--accent);
-  background: rgba(124, 140, 110, 0.25);
+  background: rgba(232, 168, 124, 0.3);
 }
 
 .cart-badge {
@@ -395,10 +397,10 @@ body {
 .add-cart-btn {
   font-size: 12px;
   font-weight: 600;
-  color: var(--accent);
-  background: var(--accent-dim);
-  border: 1px solid rgba(124, 140, 110, 0.25);
-  border-radius: 6px;
+  color: var(--secondary);
+  background: var(--secondary-dim);
+  border: 1px solid rgba(143, 168, 128, 0.25);
+  border-radius: 8px;
   padding: 6px 12px;
   cursor: pointer;
   font-family: inherit;
@@ -406,15 +408,15 @@ body {
 }
 
 .add-cart-btn:hover:not(:disabled) {
-  background: var(--accent);
+  background: var(--secondary);
   color: #FFFFFF;
-  border-color: var(--accent);
+  border-color: var(--secondary);
 }
 
 .add-cart-btn.added {
-  background: var(--accent);
+  background: var(--secondary);
   color: #FFFFFF;
-  border-color: var(--accent);
+  border-color: var(--secondary);
 }
 
 /* Login Screen */
@@ -479,7 +481,7 @@ body {
 
 .login-btn {
   width: 100%;
-  background: var(--btn);
+  background: var(--accent);
   color: #FFFFFF;
   border: none;
   border-radius: 10px;
@@ -591,7 +593,7 @@ body {
 
 .prefs-save-btn {
   width: 100%;
-  background: var(--btn);
+  background: var(--accent);
   color: #FFFFFF;
   border: none;
   border-radius: 10px;
@@ -670,7 +672,7 @@ body {
 .cart-item-image {
   width: 80px;
   min-height: 80px;
-  background: #ECECEA;
+  background: #F3EDE8;
   flex-shrink: 0;
 }
 
@@ -715,8 +717,8 @@ body {
   font-size: 11px;
   font-weight: 600;
   color: #FFFFFF;
-  background: var(--btn);
-  border-radius: 4px;
+  background: var(--accent);
+  border-radius: 6px;
   padding: 4px 10px;
   text-decoration: none;
 }
