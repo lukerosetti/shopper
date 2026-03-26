@@ -27,12 +27,20 @@ function getTextWithoutProducts(text) {
   return text.replace(/\[PRODUCT\][\s\S]*?\[\/PRODUCT\]/g, '').trim();
 }
 
+function proxyImageUrl(url) {
+  if (!url) return null;
+  return `/api/image?url=${encodeURIComponent(url)}`;
+}
+
 function ProductCard({ product }) {
+  const [imgError, setImgError] = React.useState(false);
+  const proxiedImage = proxyImageUrl(product.image);
+
   return (
     <div className="product-card">
-      {product.image && (
+      {proxiedImage && !imgError && (
         <div className="product-image">
-          <img src={product.image} alt={product.name} onError={(e) => { e.target.style.display = 'none'; }} />
+          <img src={proxiedImage} alt={product.name} onError={() => setImgError(true)} />
         </div>
       )}
       <div className="product-info">
