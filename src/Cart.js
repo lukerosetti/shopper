@@ -1,8 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { getCart, removeFromCart } from './api';
+import { getCart, removeFromCart, searchCoupons } from './api';
+
+function parseCoupons(text) {
+  const coupons = [];
+  const regex = /\[COUPON\]([\s\S]*?)\[\/COUPON\]/g;
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    const block = match[1];
+    const coupon = {};
+    const fields = ['store', 'code', 'discount', 'details', 'expires'];
+    fields.forEach(field => {
+      const fieldMatch = block.match(new RegExp(`${field}:\\s*(.+)`, 'i'));
+      if (fieldMatch) coupon[field] = fieldMatch[1].trim();
+    });
+    if (coupon.store || coupon.code) coupons.push(coupon);
+  }
+  return coupons;
+}
 
 function Cart({ onBack, cartItems, setCartItems }) {
   const [loading, setLoading] = useState(true);
+  const [coupons, setCoupons] = useState([]);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState('');
+  const [couponSearched, setCouponSearched] = useState(false);
 
   useEffect(() => {
     getCart().then(items => {
@@ -17,6 +38,27 @@ function Cart({ onBack, cartItems, setCartItems }) {
       setCartItems(result.cart || []);
     } catch (err) {
       alert('Failed to remove item');
+    }
+  };
+
+  const handleFindCoupons = async () => {
+    const stores = [...new Set(cartItems.map(i => i.store).filter(Boolean))];
+    if (stores.length === 0) return;
+
+    setCouponLoading(true);
+    setCouponError('');
+    try {
+      const result = await searchCoupons(stores);
+      const parsed = parseCoupons(result);
+      setCoupons(parsed);
+      setCouponSearched(true);
+      if (parsed.length === 0) {
+        setCouponError('No coupons found right now. Check back later!');
+      }
+    } catch (err) {
+      setCouponError(err.message.includes('token') ? 'Not enough tokens to search. Try again tomorrow!' : 'Could not search for coupons right now.');
+    } finally {
+      setCouponLoading(false);
     }
   };
 
@@ -75,9 +117,53 @@ function Cart({ onBack, cartItems, setCartItems }) {
               </div>
             ))}
           </div>
+
+          <div className="cart-bottom">
           <div className="cart-total">
             <span>Estimated Total</span>
             <span className="cart-total-price">${total.toFixed(2)}</span>
+          </div>
+
+          {/* Coupon Section */}
+          <div className="coupon-section">
+            {!couponSearched ? (
+              <button
+                className="find-coupons-btn"
+                onClick={handleFindCoupons}
+                disabled={couponLoading}
+              >
+                {couponLoading ? 'Searching for deals...' : 'Find Coupon Codes'}
+              </button>
+            ) : (
+              <div className="coupon-results">
+                <div className="coupon-results-header">
+                  <span>Coupon Codes</span>
+                  <button className="coupon-refresh" onClick={handleFindCoupons} disabled={couponLoading}>
+                    {couponLoading ? '...' : 'Refresh'}
+                  </button>
+                </div>
+                {couponError && <p className="coupon-error">{couponError}</p>}
+                {coupons.map((coupon, i) => (
+                  <div key={i} className="coupon-card">
+                    <div className="coupon-store">{coupon.store}</div>
+                    <div className="coupon-code" onClick={() => {
+                      navigator.clipboard.writeText(coupon.code || '');
+                      const el = document.getElementById(`coupon-${i}`);
+                      if (el) { el.textContent = 'Copied!'; setTimeout(() => { el.textContent = coupon.code; }, 1500); }
+                    }}>
+                      <span id={`coupon-${i}`}>{coupon.code}</span>
+                      <span className="coupon-copy-hint">tap to copy</span>
+                    </div>
+                    <div className="coupon-discount">{coupon.discount}</div>
+                    {coupon.details && <div className="coupon-details">{coupon.details}</div>}
+                    {coupon.expires && coupon.expires !== 'Unknown' && (
+                      <div className="coupon-expires">Expires: {coupon.expires}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           </div>
         </>
       )}

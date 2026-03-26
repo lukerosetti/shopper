@@ -5,7 +5,7 @@ import Cart from './Cart';
 import Preferences from './Preferences';
 import Wishlist from './Wishlist';
 import ChatHistory from './ChatHistory';
-import { sendMessage, isMockMode, toggleMockMode, validateSession, addToCart, getCart, saveFeedback, addToWishlist, saveChatHistory } from './api';
+import { sendMessage, isMockMode, toggleMockMode, validateSession, addToCart, getCart, saveFeedback, addToWishlist, saveChatHistory, getUsage } from './api';
 
 const GREETINGS = [
   "Hey Brooke! What are we hunting for today?",
@@ -50,6 +50,7 @@ function App() {
   const [greeting] = useState(getRandomGreeting);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('shopperDarkMode') === 'true');
   const [chatId] = useState(() => Date.now().toString(36));
+  const [usage, setUsage] = useState({ usedTokens: 0, remainingTokens: 75, totalTokens: 75 });
   const inputRef = useRef(null);
 
   // Apply dark mode
@@ -73,6 +74,7 @@ function App() {
   useEffect(() => {
     if (authed) {
       getCart().then(items => setCartItems(items || [])).catch(() => {});
+      getUsage().then(u => setUsage(u)).catch(() => {});
     }
   }, [authed]);
 
@@ -175,6 +177,17 @@ function App() {
     const text = (textOverride || input).trim();
     if (!text || isLoading) return;
 
+    // Check if limit is reached
+    if (usage.limitReached) {
+      setMessages(prev => [
+        ...prev,
+        { role: 'user', content: text },
+        { role: 'assistant', content: "You've used all your tokens for today! Come back tomorrow for more shopping." },
+      ]);
+      setInput('');
+      return;
+    }
+
     const userMessage = { role: 'user', content: text };
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
@@ -185,12 +198,21 @@ function App() {
       const apiMessages = updatedMessages
         .map(m => ({ role: m.role, content: m.content }));
 
-      const response = await sendMessage(apiMessages);
-      setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+      const result = await sendMessage(apiMessages);
+      setMessages(prev => [...prev, { role: 'assistant', content: result.response }]);
+      if (result.usage) {
+        setUsage(prev => ({
+          ...prev,
+          usedTokens: result.usage.usedTokens,
+          remainingTokens: result.usage.remainingTokens,
+          totalTokens: result.usage.totalTokens,
+        }));
+      }
     } catch (err) {
+      const isLimitError = err.message && err.message.includes('tokens');
       setMessages(prev => [
         ...prev,
-        { role: 'assistant', content: "Oops! I had trouble connecting. Tap retry or send your message again.", isError: true },
+        { role: 'assistant', content: isLimitError ? err.message : "Oops! I had trouble connecting. Tap retry or send your message again.", isError: !isLimitError },
       ]);
     } finally {
       setIsLoading(false);
@@ -359,21 +381,29 @@ function App() {
         onQuickPrompt={handleQuickPrompt}
       />
 
-      <div className="input-bar">
-        <input
-          ref={inputRef}
-          type="text"
-          enterKeyHint="send"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onFocus={() => { window.scrollTo(0, 0); }}
-          placeholder="What are you looking for?"
-          disabled={isLoading}
-        />
-        <button onClick={() => handleSend()} disabled={!input.trim() || isLoading} className="send-btn">
-          Send
-        </button>
+      <div className="input-section">
+        <div className="token-bar">
+          <span className="token-label">{usage.remainingTokens} tokens remaining</span>
+          <div className="token-meter">
+            <div className="token-fill" style={{ width: `${Math.max(0, (usage.remainingTokens / usage.totalTokens) * 100)}%` }} />
+          </div>
+        </div>
+        <div className="input-bar">
+          <input
+            ref={inputRef}
+            type="text"
+            enterKeyHint="send"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={() => { window.scrollTo(0, 0); }}
+            placeholder="What are you looking for?"
+            disabled={isLoading}
+          />
+          <button onClick={() => handleSend()} disabled={!input.trim() || isLoading} className="send-btn">
+            Send
+          </button>
+        </div>
       </div>
     </div>
   );

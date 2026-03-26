@@ -5,6 +5,13 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+const DAILY_LIMIT = parseFloat(process.env.DAILY_API_LIMIT || '0.75');
+
+function getTodayKey() {
+  const today = new Date().toISOString().split('T')[0];
+  return `usage:${today}`;
+}
+
 const BASE_PROMPT = `You are a friendly, expert clothing shopping assistant. Your job is to help someone find exactly what they're looking for and surface great deals.
 
 CONVERSATION FLOW:
@@ -104,6 +111,16 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    // Check daily usage limit
+    const key = getTodayKey();
+    const currentUsage = parseFloat(await kv.get(key) || '0');
+    if (currentUsage >= DAILY_LIMIT) {
+      return res.status(429).json({
+        error: 'daily_limit',
+        message: "You've used all your tokens for today! Come back tomorrow for more shopping."
+      });
+    }
+
     const { messages } = req.body;
     const systemPrompt = await buildSystemPrompt();
 
@@ -122,7 +139,33 @@ module.exports = async function handler(req, res) {
       .map(block => block.text)
       .join('');
 
-    res.json({ response: text });
+    // Estimate cost based on usage
+    const inputTokens = response.usage?.input_tokens || 0;
+    const outputTokens = response.usage?.output_tokens || 0;
+    // Haiku pricing: $0.80/1M input, $4/1M output
+    const tokenCost = (inputTokens * 0.8 + outputTokens * 4) / 1000000;
+    // Web search cost: ~$0.01-0.03 per search
+    const hadWebSearch = response.content.some(b => b.type === 'tool_use' || b.type === 'tool_result');
+    const searchCost = hadWebSearch ? 0.03 : 0;
+    const totalCost = tokenCost + searchCost;
+
+    // Record usage
+    const newUsage = currentUsage + totalCost;
+    await kv.set(key, newUsage.toString(), { ex: 172800 });
+
+    const limitTokens = Math.round(DAILY_LIMIT / 0.01);
+    const usedTokens = Math.round(newUsage / 0.01);
+
+    res.json({
+      response: text,
+      usage: {
+        usedTokens,
+        remainingTokens: Math.max(0, limitTokens - usedTokens),
+        totalTokens: limitTokens,
+        costTokens: Math.max(1, Math.round(totalCost / 0.01)),
+        hadWebSearch,
+      }
+    });
   } catch (error) {
     console.error('Claude API error:', error.message);
     res.status(500).json({ error: error.message || 'Failed to get response from AI' });

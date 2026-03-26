@@ -98,7 +98,7 @@ export async function validateSession() {
 export async function sendMessage(messages) {
   if (MOCK_MODE) {
     await new Promise(r => setTimeout(r, 800));
-    return getMockResponse();
+    return { response: getMockResponse(), usage: { usedTokens: 2, remainingTokens: 73, totalTokens: 75, costTokens: 2, hadWebSearch: false } };
   }
 
   const res = await fetch('/api/chat', {
@@ -107,9 +107,59 @@ export async function sendMessage(messages) {
     body: JSON.stringify({ messages }),
   });
 
+  if (res.status === 429) {
+    const data = await res.json();
+    throw new Error(data.message || "You've used all your tokens for today!");
+  }
+
   if (!res.ok) throw new Error('Failed to get response');
   const data = await res.json();
-  return data.response;
+  return { response: data.response, usage: data.usage };
+}
+
+// Usage
+export async function getUsage() {
+  if (MOCK_MODE) {
+    return { usedTokens: 5, remainingTokens: 70, totalTokens: 75, limitReached: false };
+  }
+  const res = await fetch('/api/usage', { headers: authHeaders() });
+  if (!res.ok) return { usedTokens: 0, remainingTokens: 75, totalTokens: 75, limitReached: false };
+  return res.json();
+}
+
+// Coupons
+export async function searchCoupons(stores) {
+  if (MOCK_MODE) {
+    await new Promise(r => setTimeout(r, 1000));
+    return `[COUPON]
+store: Uniqlo
+code: SPRING25
+discount: 25% off
+details: Spring sale on select items
+expires: April 2026
+[/COUPON]
+
+[COUPON]
+store: H&M
+code: WELCOME15
+discount: 15% off
+details: First purchase discount
+expires: Unknown
+[/COUPON]`;
+  }
+
+  const res = await fetch('/api/coupons', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ stores }),
+  });
+
+  if (res.status === 429) {
+    throw new Error('Daily token limit reached');
+  }
+  if (!res.ok) throw new Error('Failed to search coupons');
+  const data = await res.json();
+  return data.coupons;
 }
 
 // Preferences
