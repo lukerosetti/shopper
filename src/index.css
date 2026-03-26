@@ -83,6 +83,7 @@ body {
 .app {
   max-width: 500px;
   margin: 0 auto;
+  height: 100vh;
   height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -528,24 +529,23 @@ body {
   box-shadow: 0 4px 10px rgba(232, 168, 124, 0.35);
 }
 
-/* Empty chat spacer for scroll feel */
+/* Empty chat spacer - adds slight scroll content */
 .chat-empty-spacer {
-  height: 80px;
+  height: 1px;
   flex-shrink: 0;
 }
 
-/* Input Bar - fixed to absolute bottom */
+/* Input Bar - anchored to bottom */
 .input-bar {
   display: flex;
   gap: 10px;
   padding: 10px 16px;
-  padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
-  background: #FFFFFF;
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  background: var(--bg);
   border-top: none;
   flex-shrink: 0;
   box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
-  position: sticky;
-  bottom: 0;
+  position: relative;
   z-index: 10;
 }
 
