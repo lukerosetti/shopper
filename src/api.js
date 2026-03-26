@@ -381,3 +381,91 @@ export async function moveWishlistToCart(id) {
   if (!res.ok) throw new Error('Failed to move');
   return res.json();
 }
+
+// Orders
+export async function getOrders() {
+  if (MOCK_MODE) {
+    return JSON.parse(localStorage.getItem('mockOrders') || '[]');
+  }
+  const res = await fetch('/api/orders', { headers: authHeaders() });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function markAsPurchased(item) {
+  if (MOCK_MODE) {
+    const orders = JSON.parse(localStorage.getItem('mockOrders') || '[]');
+    const order = { id: Math.random().toString(36).slice(2), ...item, purchasedAt: new Date().toISOString(), trackingUrl: '', trackingNumber: '', status: 'purchased' };
+    orders.unshift(order);
+    localStorage.setItem('mockOrders', JSON.stringify(orders));
+    return { success: true, orders };
+  }
+  const res = await fetch('/api/orders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ item }),
+  });
+  if (!res.ok) throw new Error('Failed to save order');
+  return res.json();
+}
+
+export async function updateOrder(id, updates) {
+  if (MOCK_MODE) {
+    const orders = JSON.parse(localStorage.getItem('mockOrders') || '[]');
+    const order = orders.find(o => o.id === id);
+    if (order) Object.assign(order, updates);
+    localStorage.setItem('mockOrders', JSON.stringify(orders));
+    return { success: true, orders };
+  }
+  const res = await fetch('/api/orders', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ id, ...updates }),
+  });
+  if (!res.ok) throw new Error('Failed to update');
+  return res.json();
+}
+
+// Closet
+export async function getCloset() {
+  if (MOCK_MODE) {
+    return JSON.parse(localStorage.getItem('mockCloset') || '[]');
+  }
+  const res = await fetch('/api/closet', { headers: authHeaders() });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function addToCloset(imageBase64, mimeType) {
+  if (MOCK_MODE) {
+    const items = JSON.parse(localStorage.getItem('mockCloset') || '[]');
+    const item = { id: Math.random().toString(36).slice(2), description: 'Mock item: casual green cotton jacket, fitted, minimal design.', addedAt: new Date().toISOString() };
+    items.unshift(item);
+    localStorage.setItem('mockCloset', JSON.stringify(items));
+    return { success: true, item, items };
+  }
+  const res = await fetch('/api/closet', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ imageBase64, mimeType }),
+  });
+  if (res.status === 429) throw new Error('Not enough tokens');
+  if (!res.ok) throw new Error('Failed to analyze');
+  return res.json();
+}
+
+export async function removeFromCloset(id) {
+  if (MOCK_MODE) {
+    let items = JSON.parse(localStorage.getItem('mockCloset') || '[]');
+    items = items.filter(i => i.id !== id);
+    localStorage.setItem('mockCloset', JSON.stringify(items));
+    return { success: true, items };
+  }
+  const res = await fetch('/api/closet', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ id }),
+  });
+  if (!res.ok) throw new Error('Failed to remove');
+  return res.json();
+}

@@ -5,6 +5,8 @@ import Cart from './Cart';
 import Preferences from './Preferences';
 import Wishlist from './Wishlist';
 import ChatHistory from './ChatHistory';
+import Orders from './Orders';
+import Closet from './Closet';
 import { sendMessage, isMockMode, toggleMockMode, validateSession, addToCart, getCart, saveFeedback, addToWishlist, saveChatHistory, getUsage } from './api';
 
 const GREETINGS = [
@@ -306,6 +308,22 @@ function App() {
     );
   }
 
+  if (view === 'orders') {
+    return (
+      <div className="app">
+        <Orders onBack={() => setView('chat')} />
+      </div>
+    );
+  }
+
+  if (view === 'closet') {
+    return (
+      <div className="app">
+        <Closet onBack={() => setView('chat')} />
+      </div>
+    );
+  }
+
   return (
     <div className="app">
       <header className="header">
@@ -353,6 +371,12 @@ function App() {
               <button className="side-nav-item" onClick={() => { setView('cart'); setMenuOpen(false); }}>
                 <span className="nav-icon">+</span> Shopping Cart
                 {cartItems.length > 0 && <span className="nav-badge">{cartItems.length}</span>}
+              </button>
+              <button className="side-nav-item" onClick={() => { setView('orders'); setMenuOpen(false); }}>
+                <span className="nav-icon">→</span> My Orders
+              </button>
+              <button className="side-nav-item" onClick={() => { setView('closet'); setMenuOpen(false); }}>
+                <span className="nav-icon">◫</span> My Closet
               </button>
               <button className="side-nav-item" onClick={() => { setDarkMode(d => !d); }}>
                 <span className="nav-icon">{darkMode ? '○' : '●'}</span> {darkMode ? 'Light Mode' : 'Dark Mode'}

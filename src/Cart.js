@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getCart, removeFromCart, searchCoupons } from './api';
+import { getCart, removeFromCart, searchCoupons, markAsPurchased } from './api';
+import { getReturnPolicy } from './returnPolicies';
 
 function parseCoupons(text) {
   const coupons = [];
@@ -107,10 +108,19 @@ function Cart({ onBack, cartItems, setCartItems }) {
                   <div className="cart-item-name">{item.name}</div>
                   <div className="cart-item-price">{item.price}</div>
                   <div className="cart-item-store">{item.store}</div>
+                  {item.store && getReturnPolicy(item.store) && (
+                    <div className="cart-item-return">↩ {getReturnPolicy(item.store).days === -1 ? 'No time limit' : `${getReturnPolicy(item.store).days} day`} returns{getReturnPolicy(item.store).free ? ' · Free' : ''}</div>
+                  )}
                   <div className="cart-item-actions">
                     {item.url && (
                       <a href={item.url} target="_blank" rel="noopener noreferrer" className="cart-buy-btn">Buy</a>
                     )}
+                    <button className="cart-purchased-btn" onClick={async () => {
+                      try {
+                        await markAsPurchased(item);
+                        await handleRemove(item.id);
+                      } catch (e) { alert('Failed'); }
+                    }}>Purchased</button>
                     <button className="cart-remove-btn" onClick={() => handleRemove(item.id)}>Remove</button>
                   </div>
                 </div>

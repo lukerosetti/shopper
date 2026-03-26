@@ -1,4 +1,5 @@
 import React from 'react';
+import { getReturnPolicy, formatReturnPolicy } from './returnPolicies';
 
 function parseProducts(text) {
   const products = [];
@@ -73,6 +74,11 @@ function ProductCard({ product, onAddToCart, onAddToWishlist, onFeedback }) {
         {product.price && <div className="product-price">{product.price}</div>}
         {product.store && <div className="product-store">{product.store}</div>}
         {product.description && <div className="product-desc">{product.description}</div>}
+        {product.store && getReturnPolicy(product.store) && (
+          <div className="product-return-policy">
+            ↩ {formatReturnPolicy(getReturnPolicy(product.store))}
+          </div>
+        )}
         <div className="product-actions">
           {product.url && (
             <a href={product.url} target="_blank" rel="noopener noreferrer" className="product-link">

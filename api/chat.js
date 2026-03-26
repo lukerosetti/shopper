@@ -79,6 +79,18 @@ async function buildSystemPrompt() {
   }
 
   try {
+    const closet = await kv.get('closet:user');
+    if (closet && closet.length > 0) {
+      prompt += '\n\nCLOSET (clothes she already owns — suggest items that complement these):';
+      closet.forEach(item => {
+        prompt += `\n- ${item.description}`;
+      });
+    }
+  } catch (e) {
+    // Closet not available
+  }
+
+  try {
     const feedback = await kv.get('feedback:user');
     if (feedback && feedback.length > 0) {
       const liked = feedback.filter(f => f.liked);

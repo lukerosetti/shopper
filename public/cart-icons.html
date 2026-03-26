@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart Icon Options</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #FAF6F1; padding: 20px; font-family: system-ui, sans-serif; }
+  h1 { text-align: center; color: #7a8b6e; font-family: 'Playfair Display', serif; font-style: italic; margin-bottom: 24px; font-size: 22px; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 500px; margin: 0 auto; }
+  .option {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  .option h3 { font-size: 12px; color: #999; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; }
+  .header-mock {
+    background: #7a8b6e;
+    border-radius: 10px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .cart-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(250,246,241,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #faf6f1;
+    font-size: 18px;
+  }
+  .cart-icon-lg {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(122,139,110,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7a8b6e;
+    font-size: 28px;
+    margin: 0 auto 12px;
+  }
+  .desc { font-size: 11px; color: #999; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<h1>Cart Icon Options</h1>
+
+<div class="grid">
+
+  <div class="option">
+    <h3>Option A</h3>
+    <div class="cart-icon-lg">+</div>
+    <div class="header-mock">
+      <div class="cart-icon">+</div>
+    </div>
+    <p class="desc">Plus — minimal add/collect</p>
+  </div>
+
+  <div class="option">
+    <h3>Option B</h3>
+    <div class="cart-icon-lg">&#9675;</div>
+    <div class="header-mock">
+      <div class="cart-icon">&#9675;</div>
+    </div>
+    <p class="desc">Open circle — clean, empty</p>
+  </div>
+
+  <div class="option">
+    <h3>Option C</h3>
+    <div class="cart-icon-lg" style="font-family: serif; font-style: italic;">b</div>
+    <div class="header-mock">
+      <div class="cart-icon" style="font-family: serif; font-style: italic;">b</div>
+    </div>
+    <p class="desc">Italic "b" — bag monogram</p>
+  </div>
+
+  <div class="option">
+    <h3>Option D</h3>
+    <div class="cart-icon-lg">&#9671;</div>
+    <div class="header-mock">
+      <div class="cart-icon">&#9671;</div>
+    </div>
+    <p class="desc">Diamond — elegant tag shape</p>
+  </div>
+
+  <div class="option">
+    <h3>Option E</h3>
+    <div class="cart-icon-lg">&#8862;</div>
+    <div class="header-mock">
+      <div class="cart-icon">&#8862;</div>
+    </div>
+    <p class="desc">Boxed plus — add to box</p>
+  </div>
+
+  <div class="option">
+    <h3>Option F</h3>
+    <div class="cart-icon-lg">&#10697;</div>
+    <div class="header-mock">
+      <div class="cart-icon">&#10697;</div>
+    </div>
+    <p class="desc">Rounded square — soft bag</p>
+  </div>
+
+  <div class="option">
+    <h3>Option G</h3>
+    <div class="cart-icon-lg">&#9653;</div>
+    <div class="header-mock">
+      <div class="cart-icon">&#9653;</div>
+    </div>
+    <p class="desc">Triangle up — tote shape</p>
+  </div>
+
+  <div class="option">
+    <h3>Option H</h3>
+    <div class="cart-icon-lg">&#8901;</div>
+    <div class="header-mock">
+      <div class="cart-icon">&#8901;</div>
+    </div>
+    <p class="desc">Dot — ultra minimal</p>
+  </div>
+
+</div>
+
+</body>
+</html>
