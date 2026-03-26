@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getPreferences, savePreferences } from './api';
+import { getPreferences, savePreferences, resetPreferences, clearFeedback } from './api';
 
 const DEFAULT_PREFS = {
   sizes: { tops: '', bottoms: '', shoes: '' },
@@ -16,6 +16,8 @@ function Preferences({ onBack }) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [confirmResetPrefs, setConfirmResetPrefs] = useState(false);
+  const [confirmResetFeedback, setConfirmResetFeedback] = useState(false);
 
   useEffect(() => {
     getPreferences().then(data => {
@@ -94,6 +96,39 @@ function Preferences({ onBack }) {
         <button className="prefs-save-btn" onClick={handleSave} disabled={saving}>
           {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Preferences'}
         </button>
+
+        <div className="prefs-reset-section">
+          <button
+            className={`prefs-reset-btn ${confirmResetPrefs ? 'confirm' : ''}`}
+            onClick={async () => {
+              if (!confirmResetPrefs) {
+                setConfirmResetPrefs(true);
+                setTimeout(() => setConfirmResetPrefs(false), 3000);
+                return;
+              }
+              await resetPreferences();
+              setPrefs(DEFAULT_PREFS);
+              setConfirmResetPrefs(false);
+            }}
+          >
+            {confirmResetPrefs ? 'Tap again to confirm' : 'Reset Preferences'}
+          </button>
+
+          <button
+            className={`prefs-reset-btn ${confirmResetFeedback ? 'confirm' : ''}`}
+            onClick={async () => {
+              if (!confirmResetFeedback) {
+                setConfirmResetFeedback(true);
+                setTimeout(() => setConfirmResetFeedback(false), 3000);
+                return;
+              }
+              await clearFeedback();
+              setConfirmResetFeedback(false);
+            }}
+          >
+            {confirmResetFeedback ? 'Tap again to confirm' : 'Clear Style History'}
+          </button>
+        </div>
       </div>
     </div>
   );

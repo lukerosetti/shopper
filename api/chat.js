@@ -69,6 +69,30 @@ async function buildSystemPrompt() {
     // KV not available, use base prompt
   }
 
+  try {
+    const feedback = await kv.get('feedback:user');
+    if (feedback && feedback.length > 0) {
+      const liked = feedback.filter(f => f.liked);
+      const disliked = feedback.filter(f => !f.liked);
+
+      prompt += '\n\nPRODUCT FEEDBACK HISTORY (use this to understand her taste and recommend similar/avoid similar):';
+      if (liked.length > 0) {
+        prompt += '\nLIKED:';
+        liked.forEach(f => {
+          prompt += `\n- ${f.name}${f.store ? ` from ${f.store}` : ''}${f.price ? ` (${f.price})` : ''}`;
+        });
+      }
+      if (disliked.length > 0) {
+        prompt += '\nDISLIKED:';
+        disliked.forEach(f => {
+          prompt += `\n- ${f.name}${f.store ? ` from ${f.store}` : ''}${f.price ? ` (${f.price})` : ''}`;
+        });
+      }
+    }
+  } catch (e) {
+    // Feedback not available, continue without it
+  }
+
   return prompt;
 }
 

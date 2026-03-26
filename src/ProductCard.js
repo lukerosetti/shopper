@@ -32,10 +32,11 @@ function proxyImageUrl(url) {
   return `/api/image?url=${encodeURIComponent(url)}`;
 }
 
-function ProductCard({ product, onAddToCart }) {
+function ProductCard({ product, onAddToCart, onFeedback }) {
   const [imgError, setImgError] = React.useState(false);
   const [added, setAdded] = React.useState(false);
   const [adding, setAdding] = React.useState(false);
+  const [vote, setVote] = React.useState(null); // null, 'up', 'down'
   const imageSource = product.url || product.image;
   const proxiedImage = proxyImageUrl(imageSource);
 
@@ -48,6 +49,14 @@ function ProductCard({ product, onAddToCart }) {
         setAdded(true);
         setTimeout(() => setAdded(false), 2000);
       }
+    }
+  };
+
+  const handleVote = (liked) => {
+    if (vote !== null) return;
+    setVote(liked ? 'up' : 'down');
+    if (onFeedback) {
+      onFeedback(product, liked);
     }
   };
 
@@ -72,6 +81,21 @@ function ProductCard({ product, onAddToCart }) {
           <button className={`add-cart-btn ${added ? 'added' : ''}`} onClick={handleAdd} disabled={added || adding}>
             {adding ? 'Adding...' : added ? 'Added!' : 'Add to Cart'}
           </button>
+        </div>
+        <div className="product-feedback">
+          <button
+            className={`feedback-btn feedback-up ${vote === 'up' ? 'active' : ''}`}
+            onClick={() => handleVote(true)}
+            disabled={vote !== null}
+            title="I like this"
+          >👍</button>
+          <button
+            className={`feedback-btn feedback-down ${vote === 'down' ? 'active' : ''}`}
+            onClick={() => handleVote(false)}
+            disabled={vote !== null}
+            title="Not for me"
+          >👎</button>
+          {vote && <span className="feedback-label">{vote === 'up' ? 'Noted!' : 'Got it!'}</span>}
         </div>
       </div>
     </div>

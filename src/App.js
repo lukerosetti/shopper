@@ -3,7 +3,7 @@ import Chat from './Chat';
 import Login from './Login';
 import Cart from './Cart';
 import Preferences from './Preferences';
-import { sendMessage, isMockMode, toggleMockMode, validateSession, addToCart, getCart } from './api';
+import { sendMessage, isMockMode, toggleMockMode, validateSession, addToCart, getCart, saveFeedback } from './api';
 
 const GREETINGS = [
   "Hey Brooke! What are we hunting for today?",
@@ -111,6 +111,19 @@ function App() {
     }
   };
 
+  const handleFeedback = async (product, liked) => {
+    try {
+      await saveFeedback({
+        name: product.name,
+        store: product.store,
+        price: product.price,
+        liked,
+      });
+    } catch {
+      // Silent fail — feedback is non-critical
+    }
+  };
+
   const handleRetry = () => {
     // Remove the error message and resend the last user message
     setMessages(prev => {
@@ -208,7 +221,7 @@ function App() {
         </>
       )}
 
-      <Chat messages={messages} isLoading={isLoading} onAddToCart={handleAddToCart} onRetry={handleRetry} />
+      <Chat messages={messages} isLoading={isLoading} onAddToCart={handleAddToCart} onFeedback={handleFeedback} onRetry={handleRetry} />
 
       <div className="input-bar">
         <input

@@ -176,3 +176,47 @@ export async function removeFromCart(id) {
   if (!res.ok) throw new Error('Failed to remove');
   return res.json();
 }
+
+// Feedback
+export async function saveFeedback(item) {
+  if (MOCK_MODE) {
+    const feedback = JSON.parse(localStorage.getItem('mockFeedback') || '[]');
+    feedback.push({ ...item, timestamp: new Date().toISOString() });
+    localStorage.setItem('mockFeedback', JSON.stringify(feedback.slice(-50)));
+    return { success: true };
+  }
+
+  const res = await fetch('/api/feedback', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify(item),
+  });
+  if (!res.ok) throw new Error('Failed to save feedback');
+  return res.json();
+}
+
+export async function clearFeedback() {
+  if (MOCK_MODE) {
+    localStorage.removeItem('mockFeedback');
+    return { success: true };
+  }
+
+  const res = await fetch('/api/feedback', {
+    method: 'DELETE',
+    headers: { ...authHeaders() },
+  });
+  if (!res.ok) throw new Error('Failed to clear feedback');
+  return res.json();
+}
+
+// Reset preferences
+export async function resetPreferences() {
+  if (MOCK_MODE) return { success: true };
+
+  const res = await fetch('/api/preferences', {
+    method: 'DELETE',
+    headers: { ...authHeaders() },
+  });
+  if (!res.ok) throw new Error('Failed to reset');
+  return res.json();
+}

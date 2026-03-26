@@ -1036,6 +1036,89 @@ body {
   color: var(--text-dim);
 }
 
+/* Product Feedback (thumbs) */
+.product-feedback {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--card-border);
+}
+
+.feedback-btn {
+  background: var(--bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 36px;
+}
+
+.feedback-btn:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.feedback-btn.feedback-up.active {
+  background: rgba(143, 168, 128, 0.2);
+  border-color: var(--secondary);
+  opacity: 1;
+}
+
+.feedback-btn.feedback-down.active {
+  background: rgba(212, 128, 106, 0.15);
+  border-color: var(--red);
+  opacity: 1;
+}
+
+.feedback-btn:not(:disabled):hover {
+  border-color: var(--accent);
+}
+
+.feedback-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* Reset buttons */
+.prefs-reset-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prefs-reset-btn {
+  width: 100%;
+  background: none;
+  color: var(--red);
+  border: 1px solid rgba(212, 128, 106, 0.3);
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.prefs-reset-btn:hover {
+  background: rgba(212, 128, 106, 0.06);
+}
+
+.prefs-reset-btn.confirm {
+  background: var(--red);
+  color: #FFFFFF;
+  border-color: var(--red);
+}
+
 /* Carousel hint */
 .carousel-hint {
   font-size: 11px;

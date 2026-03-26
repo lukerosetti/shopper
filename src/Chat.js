@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import ProductCard, { parseProducts, getTextWithoutProducts } from './ProductCard';
 
-function ChatMessage({ message, onAddToCart, onRetry }) {
+function ChatMessage({ message, onAddToCart, onFeedback, onRetry }) {
   if (message.role === 'user') {
     return (
       <div className="message user-message fade-in">
@@ -27,7 +27,7 @@ function ChatMessage({ message, onAddToCart, onRetry }) {
         <div className="products-carousel">
           <div className="products-carousel-track">
             {products.map((product, i) => (
-              <ProductCard key={i} product={product} onAddToCart={onAddToCart} />
+              <ProductCard key={i} product={product} onAddToCart={onAddToCart} onFeedback={onFeedback} />
             ))}
           </div>
           <div className="carousel-hint">swipe for more →</div>
@@ -37,7 +37,7 @@ function ChatMessage({ message, onAddToCart, onRetry }) {
   );
 }
 
-function Chat({ messages, isLoading, onAddToCart, onRetry }) {
+function Chat({ messages, isLoading, onAddToCart, onFeedback, onRetry }) {
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ function Chat({ messages, isLoading, onAddToCart, onRetry }) {
   return (
     <div className="chat-area">
       {messages.map((msg, i) => (
-        <ChatMessage key={i} message={msg} onAddToCart={onAddToCart} onRetry={msg.isError ? onRetry : null} />
+        <ChatMessage key={i} message={msg} onAddToCart={onAddToCart} onFeedback={onFeedback} onRetry={msg.isError ? onRetry : null} />
       ))}
       {isLoading && (
         <div className="message ai-message">

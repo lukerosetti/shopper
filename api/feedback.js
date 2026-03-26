@@ -13,18 +13,31 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
-    const prefs = await kv.get('prefs:user') || {};
-    return res.json(prefs);
+    const feedback = await kv.get('feedback:user') || [];
+    return res.json(feedback);
   }
 
-  if (req.method === 'PUT') {
-    const prefs = req.body;
-    await kv.set('prefs:user', prefs);
+  if (req.method === 'POST') {
+    const { name, store, price, liked } = req.body;
+    const feedback = await kv.get('feedback:user') || [];
+
+    feedback.push({
+      name,
+      store,
+      price,
+      liked,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Cap at 50 most recent
+    const capped = feedback.slice(-50);
+    await kv.set('feedback:user', capped);
+
     return res.json({ success: true });
   }
 
   if (req.method === 'DELETE') {
-    await kv.set('prefs:user', {});
+    await kv.set('feedback:user', []);
     return res.json({ success: true });
   }
 
