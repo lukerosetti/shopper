@@ -26,14 +26,15 @@ name: Product Name Here
 price: $XX.XX
 store: Store Name
 url: https://actual-link-to-product
-image: https://image-url-if-available
+image: https://direct-image-url.jpg
 description: Brief 1-sentence description
 [/PRODUCT]
 
 IMPORTANT RULES:
 - Be conversational and warm, not robotic
 - Ask questions naturally — like a knowledgeable friend helping them shop
-- When searching, look for REAL products with REAL links that actually work
+- You have web search available — USE IT to find real products with real URLs and real image URLs
+- Every product MUST have a working image URL. Search for the product on the retailer's website and find the actual product image URL
 - Prioritize deals and good value
 - Include a mix of price points within their budget
 - After showing products, ask if they want to refine the search or look at something else
@@ -49,8 +50,9 @@ module.exports = async function handler(req, res) {
 
     const response = await client.messages.create({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 1500,
+      max_tokens: 4096,
       system: SYSTEM_PROMPT,
+      tools: [{ type: 'web_search_20250305' }],
       messages: messages,
     });
 
