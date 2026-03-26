@@ -57,6 +57,25 @@ function App() {
     }
   }, [authed]);
 
+  // Handle iOS keyboard - keep layout visible when keyboard opens
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const onResize = () => {
+      const app = document.querySelector('.app');
+      if (!app) return;
+      // Set app height to visual viewport height (shrinks when keyboard is open)
+      app.style.height = `${vv.height}px`;
+      // Scroll to bottom of chat so latest messages stay visible
+      const chatArea = document.querySelector('.chat-area');
+      if (chatArea) {
+        setTimeout(() => chatArea.scrollTop = chatArea.scrollHeight, 50);
+      }
+    };
+    vv.addEventListener('resize', onResize);
+    return () => vv.removeEventListener('resize', onResize);
+  }, []);
+
   const handleLogin = (token) => {
     setAuthed(true);
   };
