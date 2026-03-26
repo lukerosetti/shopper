@@ -4,7 +4,7 @@ import ProductCard, { parseProducts, getTextWithoutProducts } from './ProductCar
 function ChatMessage({ message, onAddToCart }) {
   if (message.role === 'user') {
     return (
-      <div className="message user-message">
+      <div className="message user-message fade-in">
         <div className="bubble user-bubble">{message.content}</div>
       </div>
     );
@@ -14,13 +14,15 @@ function ChatMessage({ message, onAddToCart }) {
   const text = getTextWithoutProducts(message.content);
 
   return (
-    <div className="message ai-message">
+    <div className="message ai-message fade-in">
       {text && <div className="bubble ai-bubble">{text}</div>}
       {products.length > 0 && (
-        <div className="products-list">
-          {products.map((product, i) => (
-            <ProductCard key={i} product={product} onAddToCart={onAddToCart} />
-          ))}
+        <div className="products-carousel">
+          <div className="products-carousel-track">
+            {products.map((product, i) => (
+              <ProductCard key={i} product={product} onAddToCart={onAddToCart} />
+            ))}
+          </div>
         </div>
       )}
     </div>
