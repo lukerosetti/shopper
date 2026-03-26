@@ -29,12 +29,17 @@
   box-sizing: border-box;
 }
 
+html {
+  background: var(--bg2);
+}
+
 body {
   font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
 }
 
 /* App Layout */
@@ -66,10 +71,10 @@ body {
 }
 
 .header h1 {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 800;
   color: var(--header-text);
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
 }
 
 .header-greeting {

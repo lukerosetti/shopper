@@ -144,16 +144,14 @@ function App() {
     <div className="app">
       <header className="header">
         <div className="header-left">
-          <h1>Shopper <span className="header-tag">AI</span></h1>
+          <h1>Closet Concierge</h1>
           <span className="header-greeting">{greeting}</span>
         </div>
         <div className="header-right">
           {isMockMode() && <span className="mock-badge">MOCK</span>}
-          {cartItems.length > 0 && (
-            <button className="nav-btn cart-nav-btn" onClick={() => setView('cart')} title="Cart">
-              🛒{' '}<span className="cart-badge">{cartItems.length}</span>
-            </button>
-          )}
+          <button className="nav-btn cart-nav-btn" onClick={() => setView('cart')} title="Cart">
+            🛒{cartItems.length > 0 && <span className="cart-badge">{cartItems.length}</span>}
+          </button>
           <button className="menu-btn" onClick={() => setMenuOpen(true)} title="Menu">
             ☰
           </button>
