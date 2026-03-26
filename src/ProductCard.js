@@ -32,11 +32,21 @@ function proxyImageUrl(url) {
   return `/api/image?url=${encodeURIComponent(url)}`;
 }
 
-function ProductCard({ product }) {
+function ProductCard({ product, onAddToCart }) {
   const [imgError, setImgError] = React.useState(false);
-  // Try product page URL first (og:image extraction), fall back to direct image URL
+  const [added, setAdded] = React.useState(false);
   const imageSource = product.url || product.image;
   const proxiedImage = proxyImageUrl(imageSource);
+
+  const handleAdd = async () => {
+    if (onAddToCart) {
+      const success = await onAddToCart(product);
+      if (success) {
+        setAdded(true);
+        setTimeout(() => setAdded(false), 2000);
+      }
+    }
+  };
 
   return (
     <div className="product-card">
@@ -50,11 +60,16 @@ function ProductCard({ product }) {
         {product.price && <div className="product-price">{product.price}</div>}
         {product.store && <div className="product-store">{product.store}</div>}
         {product.description && <div className="product-desc">{product.description}</div>}
-        {product.url && (
-          <a href={product.url} target="_blank" rel="noopener noreferrer" className="product-link">
-            View Deal →
-          </a>
-        )}
+        <div className="product-actions">
+          {product.url && (
+            <a href={product.url} target="_blank" rel="noopener noreferrer" className="product-link">
+              View Deal →
+            </a>
+          )}
+          <button className={`add-cart-btn ${added ? 'added' : ''}`} onClick={handleAdd} disabled={added}>
+            {added ? 'Added!' : 'Add to Cart'}
+          </button>
+        </div>
       </div>
     </div>
   );

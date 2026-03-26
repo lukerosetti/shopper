@@ -1,6 +1,10 @@
 {
   "rewrites": [
     { "source": "/api/chat", "destination": "/api/chat" },
+    { "source": "/api/auth", "destination": "/api/auth" },
+    { "source": "/api/cart", "destination": "/api/cart" },
+    { "source": "/api/preferences", "destination": "/api/preferences" },
+    { "source": "/api/image", "destination": "/api/image" },
     { "source": "/(.*)", "destination": "/" }
   ]
 }

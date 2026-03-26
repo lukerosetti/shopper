@@ -1,10 +1,11 @@
 const Anthropic = require('@anthropic-ai/sdk').default;
+const { kv } = require('@vercel/kv');
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const SYSTEM_PROMPT = `You are a friendly, expert clothing shopping assistant. Your job is to help someone find exactly what they're looking for and surface great deals.
+const BASE_PROMPT = `You are a friendly, expert clothing shopping assistant. Your job is to help someone find exactly what they're looking for and surface great deals.
 
 CONVERSATION FLOW:
 1. Start by asking what they're shopping for (type of clothing item)
@@ -16,6 +17,7 @@ CONVERSATION FLOW:
    - Color preferences
    - Brand preferences or brands to avoid
    You can ask 2-3 questions at a time to keep it conversational.
+   If you already know some of these from the user's saved preferences, skip those questions!
 3. ONLY search the web after you have ALL the info above. Do NOT search early.
 4. Do ONE focused web search that covers everything, then present 3-5 product recommendations.
 5. If they want refinements, try to adjust your recommendations from memory first. Only search again if they change major criteria (different item, different budget, etc.)
@@ -42,7 +44,34 @@ IMPORTANT RULES:
 - After showing products, ask if they want to refine the search or look at something else
 - Keep responses concise — this is a mobile chat interface`;
 
-// Vercel serverless function config — allow up to 60s for web search
+async function buildSystemPrompt() {
+  let prompt = BASE_PROMPT;
+
+  try {
+    const prefs = await kv.get('prefs:user');
+    if (prefs && Object.keys(prefs).length > 0) {
+      prompt += '\n\nUSER PREFERENCES (already saved — use these and skip asking about them):';
+      if (prefs.sizes) {
+        const sizes = [];
+        if (prefs.sizes.tops) sizes.push(`Tops: ${prefs.sizes.tops}`);
+        if (prefs.sizes.bottoms) sizes.push(`Bottoms: ${prefs.sizes.bottoms}`);
+        if (prefs.sizes.shoes) sizes.push(`Shoes: ${prefs.sizes.shoes}`);
+        if (sizes.length) prompt += `\n- Sizes: ${sizes.join(', ')}`;
+      }
+      if (prefs.styles) prompt += `\n- Style: ${prefs.styles}`;
+      if (prefs.budgetRange) prompt += `\n- Budget: ${prefs.budgetRange}`;
+      if (prefs.favoriteStores) prompt += `\n- Favorite stores: ${prefs.favoriteStores}`;
+      if (prefs.avoidBrands) prompt += `\n- Avoid brands: ${prefs.avoidBrands}`;
+      if (prefs.colors) prompt += `\n- Favorite colors: ${prefs.colors}`;
+      if (prefs.notes) prompt += `\n- Notes: ${prefs.notes}`;
+    }
+  } catch (e) {
+    // KV not available, use base prompt
+  }
+
+  return prompt;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -50,11 +79,12 @@ module.exports = async function handler(req, res) {
 
   try {
     const { messages } = req.body;
+    const systemPrompt = await buildSystemPrompt();
 
     const response = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 4096,
-      system: SYSTEM_PROMPT,
+      system: systemPrompt,
       tools: [
         { type: 'web_search_20250305', name: 'web_search' }
       ],
@@ -73,7 +103,6 @@ module.exports = async function handler(req, res) {
   }
 };
 
-// Vercel config: extend timeout to 60 seconds
 module.exports.config = {
   maxDuration: 60,
 };

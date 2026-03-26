@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import ProductCard, { parseProducts, getTextWithoutProducts } from './ProductCard';
 
-function ChatMessage({ message }) {
+function ChatMessage({ message, onAddToCart }) {
   if (message.role === 'user') {
     return (
       <div className="message user-message">
@@ -19,7 +19,7 @@ function ChatMessage({ message }) {
       {products.length > 0 && (
         <div className="products-list">
           {products.map((product, i) => (
-            <ProductCard key={i} product={product} />
+            <ProductCard key={i} product={product} onAddToCart={onAddToCart} />
           ))}
         </div>
       )}
@@ -27,7 +27,7 @@ function ChatMessage({ message }) {
   );
 }
 
-function Chat({ messages, isLoading }) {
+function Chat({ messages, isLoading, onAddToCart }) {
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function Chat({ messages, isLoading }) {
   return (
     <div className="chat-area">
       {messages.map((msg, i) => (
-        <ChatMessage key={i} message={msg} />
+        <ChatMessage key={i} message={msg} onAddToCart={onAddToCart} />
       ))}
       {isLoading && (
         <div className="message ai-message">

@@ -1,6 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Chat from './Chat';
-import { sendMessage, isMockMode, toggleMockMode } from './api';
+import Login from './Login';
+import Cart from './Cart';
+import Preferences from './Preferences';
+import { sendMessage, isMockMode, toggleMockMode, validateSession, addToCart, getCart } from './api';
 
 const WELCOME_MESSAGE = {
   role: 'assistant',
@@ -8,10 +11,57 @@ const WELCOME_MESSAGE = {
 };
 
 function App() {
+  const [authed, setAuthed] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true);
+  const [view, setView] = useState('chat'); // chat, cart, prefs
   const [messages, setMessages] = useState([WELCOME_MESSAGE]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (isMockMode()) {
+      setAuthed(true);
+      setAuthChecking(false);
+      return;
+    }
+    validateSession().then(valid => {
+      setAuthed(valid);
+      setAuthChecking(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (authed) {
+      getCart().then(items => setCartItems(items || [])).catch(() => {});
+    }
+  }, [authed]);
+
+  const handleLogin = (token) => {
+    setAuthed(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('shopperToken');
+    setAuthed(false);
+  };
+
+  const handleAddToCart = async (product) => {
+    try {
+      const result = await addToCart({
+        name: product.name,
+        price: product.price,
+        store: product.store,
+        url: product.url,
+        imageUrl: product.image,
+      });
+      setCartItems(result.cart || []);
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
   const handleSend = async () => {
     const text = input.trim();
@@ -52,6 +102,30 @@ function App() {
     setInput('');
   };
 
+  if (authChecking) {
+    return <div className="app"><div className="loading-screen">Loading...</div></div>;
+  }
+
+  if (!authed) {
+    return <Login onLogin={handleLogin} />;
+  }
+
+  if (view === 'cart') {
+    return (
+      <div className="app">
+        <Cart onBack={() => setView('chat')} cartItems={cartItems} setCartItems={setCartItems} />
+      </div>
+    );
+  }
+
+  if (view === 'prefs') {
+    return (
+      <div className="app">
+        <Preferences onBack={() => setView('chat')} />
+      </div>
+    );
+  }
+
   return (
     <div className="app">
       <header className="header">
@@ -61,8 +135,11 @@ function App() {
         </div>
         <div className="header-right">
           {isMockMode() && <span className="mock-badge">MOCK</span>}
-          <button className="clear-btn" onClick={toggleMockMode} title="Toggle mock mode">
-            {isMockMode() ? 'Live' : 'Mock'}
+          <button className="nav-btn" onClick={() => setView('prefs')} title="Preferences">
+            Prefs
+          </button>
+          <button className="nav-btn cart-nav-btn" onClick={() => setView('cart')} title="Cart">
+            Cart{cartItems.length > 0 && <span className="cart-badge">{cartItems.length}</span>}
           </button>
           <button className="clear-btn" onClick={handleClear} title="New chat">
             New
@@ -70,7 +147,7 @@ function App() {
         </div>
       </header>
 
-      <Chat messages={messages} isLoading={isLoading} />
+      <Chat messages={messages} isLoading={isLoading} onAddToCart={handleAddToCart} />
 
       <div className="input-bar">
         <input
