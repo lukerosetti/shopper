@@ -40,6 +40,7 @@ IMPORTANT RULES:
 - After showing products, ask if they want to refine the search or look at something else
 - Keep responses concise — this is a mobile chat interface`;
 
+// Vercel serverless function config — allow up to 60s for web search
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -49,10 +50,12 @@ module.exports = async function handler(req, res) {
     const { messages } = req.body;
 
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 4096,
       system: SYSTEM_PROMPT,
-      tools: [{ type: 'web_search_20250305' }],
+      tools: [
+        { type: 'web_search_20250305', name: 'web_search' }
+      ],
       messages: messages,
     });
 
@@ -64,6 +67,11 @@ module.exports = async function handler(req, res) {
     res.json({ response: text });
   } catch (error) {
     console.error('Claude API error:', error.message);
-    res.status(500).json({ error: 'Failed to get response from AI' });
+    res.status(500).json({ error: error.message || 'Failed to get response from AI' });
   }
+};
+
+// Vercel config: extend timeout to 60 seconds
+module.exports.config = {
+  maxDuration: 60,
 };
