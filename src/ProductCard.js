@@ -34,7 +34,9 @@ function proxyImageUrl(url) {
 
 function ProductCard({ product }) {
   const [imgError, setImgError] = React.useState(false);
-  const proxiedImage = proxyImageUrl(product.image);
+  // Try product page URL first (og:image extraction), fall back to direct image URL
+  const imageSource = product.url || product.image;
+  const proxiedImage = proxyImageUrl(imageSource);
 
   return (
     <div className="product-card">
