@@ -35,12 +35,15 @@ function proxyImageUrl(url) {
 function ProductCard({ product, onAddToCart }) {
   const [imgError, setImgError] = React.useState(false);
   const [added, setAdded] = React.useState(false);
+  const [adding, setAdding] = React.useState(false);
   const imageSource = product.url || product.image;
   const proxiedImage = proxyImageUrl(imageSource);
 
   const handleAdd = async () => {
-    if (onAddToCart) {
+    if (onAddToCart && !adding) {
+      setAdding(true);
       const success = await onAddToCart(product);
+      setAdding(false);
       if (success) {
         setAdded(true);
         setTimeout(() => setAdded(false), 2000);
@@ -66,8 +69,8 @@ function ProductCard({ product, onAddToCart }) {
               View Deal →
             </a>
           )}
-          <button className={`add-cart-btn ${added ? 'added' : ''}`} onClick={handleAdd} disabled={added}>
-            {added ? 'Added!' : 'Add to Cart'}
+          <button className={`add-cart-btn ${added ? 'added' : ''}`} onClick={handleAdd} disabled={added || adding}>
+            {adding ? 'Adding...' : added ? 'Added!' : 'Add to Cart'}
           </button>
         </div>
       </div>

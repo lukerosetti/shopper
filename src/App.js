@@ -96,7 +96,7 @@ function App() {
     } catch (err) {
       setMessages(prev => [
         ...prev,
-        { role: 'assistant', content: "Sorry, I had trouble connecting. Please try again!" },
+        { role: 'assistant', content: "Oops! I had trouble connecting. Tap retry or send your message again.", isError: true },
       ]);
     } finally {
       setIsLoading(false);
@@ -109,6 +109,19 @@ function App() {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const handleRetry = () => {
+    // Remove the error message and resend the last user message
+    setMessages(prev => {
+      const withoutError = prev.filter(m => !m.isError);
+      const lastUserMsg = [...withoutError].reverse().find(m => m.role === 'user');
+      if (lastUserMsg) {
+        setInput(lastUserMsg.content);
+        return withoutError.slice(0, -1); // remove last user message too, handleSend will re-add it
+      }
+      return withoutError;
+    });
   };
 
   const handleClear = () => {
@@ -144,8 +157,13 @@ function App() {
     <div className="app">
       <header className="header">
         <div className="header-left">
-          <h1>Closet Concierge</h1>
-          <span className="header-greeting">{greeting}</span>
+          <div className="header-brand">
+            <img src="/logo.png" alt="" className="header-logo" />
+            <div>
+              <h1>Closet Concierge</h1>
+              <span className="header-greeting">{greeting}</span>
+            </div>
+          </div>
         </div>
         <div className="header-right">
           {isMockMode() && <span className="mock-badge">MOCK</span>}
@@ -190,7 +208,7 @@ function App() {
         </>
       )}
 
-      <Chat messages={messages} isLoading={isLoading} onAddToCart={handleAddToCart} />
+      <Chat messages={messages} isLoading={isLoading} onAddToCart={handleAddToCart} onRetry={handleRetry} />
 
       <div className="input-bar">
         <input
