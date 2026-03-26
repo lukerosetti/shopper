@@ -1443,7 +1443,22 @@ body {
 }
 
 [data-theme="dark"] .header {
-  background: linear-gradient(135deg, #2A3324 0%, #354030 100%);
+  background: linear-gradient(135deg, #1E2A1A 0%, #253020 100%);
+}
+
+[data-theme="dark"] .header h1 {
+  color: #E8DED6;
+}
+
+[data-theme="dark"] .header-greeting {
+  color: #8FA880;
+}
+
+[data-theme="dark"] .nav-btn,
+[data-theme="dark"] .menu-btn {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.1);
+  color: #E8DED6;
 }
 
 [data-theme="dark"] .input-bar {
