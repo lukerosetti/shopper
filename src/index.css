@@ -341,6 +341,7 @@ body {
   gap: 14px;
   -webkit-overflow-scrolling: touch;
   min-height: 0;
+  overscroll-behavior-y: auto;
   background:
     radial-gradient(ellipse at 15% 20%, rgba(163, 184, 140, 0.08) 0%, transparent 50%),
     radial-gradient(ellipse at 85% 60%, rgba(232, 168, 124, 0.06) 0%, transparent 50%),
@@ -529,21 +530,22 @@ body {
 
 /* Empty chat spacer for scroll feel */
 .chat-empty-spacer {
-  min-height: calc(100% + 40px);
+  height: 80px;
   flex-shrink: 0;
 }
 
-/* Input Bar */
+/* Input Bar - fixed to absolute bottom */
 .input-bar {
   display: flex;
   gap: 10px;
-  padding: 12px 16px 14px;
-  padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  padding: 10px 16px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
   background: #FFFFFF;
   border-top: none;
   flex-shrink: 0;
   box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
-  position: relative;
+  position: sticky;
+  bottom: 0;
   z-index: 10;
 }
 
