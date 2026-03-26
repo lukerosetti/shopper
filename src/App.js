@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Chat from './Chat';
-import { sendMessage } from './api';
+import { sendMessage, isMockMode, toggleMockMode } from './api';
 
 const WELCOME_MESSAGE = {
   role: 'assistant',
@@ -59,9 +59,15 @@ function App() {
           <h1>Shopper</h1>
           <span className="header-tag">AI</span>
         </div>
-        <button className="clear-btn" onClick={handleClear} title="New chat">
-          New
-        </button>
+        <div className="header-right">
+          {isMockMode() && <span className="mock-badge">MOCK</span>}
+          <button className="clear-btn" onClick={toggleMockMode} title="Toggle mock mode">
+            {isMockMode() ? 'Live' : 'Mock'}
+          </button>
+          <button className="clear-btn" onClick={handleClear} title="New chat">
+            New
+          </button>
+        </div>
       </header>
 
       <Chat messages={messages} isLoading={isLoading} />
