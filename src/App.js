@@ -57,23 +57,28 @@ function App() {
     }
   }, [authed]);
 
-  // Handle iOS keyboard - keep layout visible when keyboard opens
+  // Handle iOS keyboard - prevent page from scrolling up
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
     const onResize = () => {
-      const app = document.querySelector('.app');
-      if (!app) return;
-      // Set app height to visual viewport height (shrinks when keyboard is open)
-      app.style.height = `${vv.height}px`;
-      // Scroll to bottom of chat so latest messages stay visible
-      const chatArea = document.querySelector('.chat-area');
-      if (chatArea) {
-        setTimeout(() => chatArea.scrollTop = chatArea.scrollHeight, 50);
-      }
+      // On iOS, when keyboard opens the visual viewport shrinks
+      // but the layout viewport stays the same. We need to keep
+      // the page scrolled to top so the header stays visible.
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+    const onScroll = () => {
+      // Prevent iOS from scrolling the entire page up
+      window.scrollTo(0, 0);
     };
     vv.addEventListener('resize', onResize);
-    return () => vv.removeEventListener('resize', onResize);
+    vv.addEventListener('scroll', onScroll);
+    return () => {
+      vv.removeEventListener('resize', onResize);
+      vv.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   const handleLogin = (token) => {
@@ -246,9 +251,11 @@ function App() {
         <input
           ref={inputRef}
           type="text"
+          enterKeyHint="send"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
+          onFocus={() => { window.scrollTo(0, 0); }}
           placeholder="What are you looking for?"
           disabled={isLoading}
         />
