@@ -21,12 +21,12 @@ const GREETINGS = [
 ];
 
 const QUICK_PROMPTS = [
-  { icon: '◇', label: 'Date night outfit', text: "I need a date night outfit" },
-  { icon: '○', label: 'Comfy shoes', text: "I'm looking for comfortable everyday shoes" },
-  { icon: '△', label: 'New bag', text: "Help me find a cute bag" },
-  { icon: '·', label: 'Summer looks', text: "Show me trendy summer outfits" },
-  { icon: '□', label: 'Work clothes', text: "I need professional work clothes" },
-  { icon: '—', label: 'Deals under $30', text: "Find me cute clothes under $30" },
+  { label: 'Date night outfit', text: "I need a date night outfit" },
+  { label: 'Comfy shoes', text: "I'm looking for comfortable everyday shoes" },
+  { label: 'New bag', text: "Help me find a cute bag" },
+  { label: 'Summer looks', text: "Show me trendy summer outfits" },
+  { label: 'Work clothes', text: "I need professional work clothes" },
+  { label: 'Deals under $30', text: "Find me cute clothes under $30" },
 ];
 
 function getRandomGreeting() {
@@ -76,23 +76,48 @@ function App() {
     }
   }, [authed]);
 
-  // Handle iOS keyboard - prevent page from scrolling up
+  // Handle iOS keyboard - messaging app style
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
+    const appEl = document.querySelector('.app');
+    if (!appEl) return;
+
+    let initialHeight = vv.height;
+
     const onResize = () => {
+      // When keyboard opens, vv.height shrinks
+      // Resize the app container to fit the visible viewport
+      appEl.style.height = `${vv.height}px`;
+      // Prevent the page from scrolling behind the keyboard
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
+      // Scroll chat to bottom so latest messages stay visible
+      const chatArea = document.querySelector('.chat-area');
+      if (chatArea) {
+        requestAnimationFrame(() => {
+          chatArea.scrollTop = chatArea.scrollHeight;
+        });
+      }
     };
-    const onScroll = () => {
-      window.scrollTo(0, 0);
-    };
+
     vv.addEventListener('resize', onResize);
-    vv.addEventListener('scroll', onScroll);
+
+    // Also prevent body scroll
+    const onTouchMove = (e) => {
+      // Allow scrolling inside chat-area, prevent body scroll
+      if (!e.target.closest('.chat-area') && !e.target.closest('.side-nav')) {
+        if (vv.height < initialHeight - 100) {
+          e.preventDefault();
+        }
+      }
+    };
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+
     return () => {
       vv.removeEventListener('resize', onResize);
-      vv.removeEventListener('scroll', onScroll);
+      document.removeEventListener('touchmove', onTouchMove);
+      appEl.style.height = '';
     };
   }, []);
 

@@ -51,7 +51,6 @@ function Chat({ messages, isLoading, onAddToCart, onAddToWishlist, onFeedback, o
         <div className="quick-prompts">
           {quickPrompts.map((prompt, i) => (
             <button key={i} className="quick-prompt-btn" onClick={() => onQuickPrompt(prompt.text)}>
-              <span className="quick-prompt-icon">{prompt.icon}</span>
               <span className="quick-prompt-text">{prompt.label}</span>
             </button>
           ))}
