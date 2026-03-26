@@ -11,6 +11,23 @@ const DEFAULT_PREFS = {
   notes: '',
 };
 
+function PrefsField({ label, placeholder, value, onChange, icon }) {
+  return (
+    <div className="prefs-field">
+      <div className="prefs-field-label">
+        {icon && <span className="prefs-field-icon">{icon}</span>}
+        {label}
+      </div>
+      <input
+        className="prefs-field-input"
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+      />
+    </div>
+  );
+}
+
 function Preferences({ onBack }) {
   const [prefs, setPrefs] = useState(DEFAULT_PREFS);
   const [saving, setSaving] = useState(false);
@@ -49,48 +66,51 @@ function Preferences({ onBack }) {
   return (
     <div className="prefs-view">
       <div className="prefs-header">
-        <button className="prefs-back" onClick={onBack}>Back</button>
-        <h2>Style Preferences</h2>
+        <button className="prefs-back" onClick={onBack}>← Back</button>
+        <h2>My Style Profile</h2>
       </div>
 
       <div className="prefs-form">
-        <div className="prefs-section">
-          <label>Sizes</label>
-          <div className="prefs-row">
-            <input placeholder="Tops (e.g. M)" value={prefs.sizes.tops} onChange={e => updateSize('tops', e.target.value)} />
-            <input placeholder="Bottoms (e.g. 32x32)" value={prefs.sizes.bottoms} onChange={e => updateSize('bottoms', e.target.value)} />
-            <input placeholder="Shoes (e.g. 10)" value={prefs.sizes.shoes} onChange={e => updateSize('shoes', e.target.value)} />
+        <div className="prefs-card">
+          <div className="prefs-card-title">📏 My Sizes</div>
+          <div className="prefs-size-grid">
+            <div className="prefs-size-item">
+              <span className="prefs-size-label">Tops</span>
+              <input className="prefs-size-input" placeholder="e.g. M" value={prefs.sizes.tops} onChange={e => updateSize('tops', e.target.value)} />
+            </div>
+            <div className="prefs-size-item">
+              <span className="prefs-size-label">Bottoms</span>
+              <input className="prefs-size-input" placeholder="e.g. 6" value={prefs.sizes.bottoms} onChange={e => updateSize('bottoms', e.target.value)} />
+            </div>
+            <div className="prefs-size-item">
+              <span className="prefs-size-label">Shoes</span>
+              <input className="prefs-size-input" placeholder="e.g. 8" value={prefs.sizes.shoes} onChange={e => updateSize('shoes', e.target.value)} />
+            </div>
           </div>
         </div>
 
-        <div className="prefs-section">
-          <label>Style Preferences</label>
-          <input placeholder="e.g. minimalist, casual, streetwear" value={prefs.styles} onChange={e => setPrefs(p => ({ ...p, styles: e.target.value }))} />
+        <div className="prefs-card">
+          <div className="prefs-card-title">✨ Style & Taste</div>
+          <PrefsField icon="👗" label="My Style" placeholder="e.g. casual, boho, minimalist" value={prefs.styles} onChange={e => setPrefs(p => ({ ...p, styles: e.target.value }))} />
+          <PrefsField icon="🎨" label="Favorite Colors" placeholder="e.g. sage green, black, cream" value={prefs.colors} onChange={e => setPrefs(p => ({ ...p, colors: e.target.value }))} />
+          <PrefsField icon="💰" label="Budget Range" placeholder="e.g. $25-75" value={prefs.budgetRange} onChange={e => setPrefs(p => ({ ...p, budgetRange: e.target.value }))} />
         </div>
 
-        <div className="prefs-section">
-          <label>Budget Range</label>
-          <input placeholder="e.g. $25-75" value={prefs.budgetRange} onChange={e => setPrefs(p => ({ ...p, budgetRange: e.target.value }))} />
+        <div className="prefs-card">
+          <div className="prefs-card-title">🛍 Shopping Preferences</div>
+          <PrefsField icon="💚" label="Favorite Stores" placeholder="e.g. Zara, H&M, Nordstrom" value={prefs.favoriteStores} onChange={e => setPrefs(p => ({ ...p, favoriteStores: e.target.value }))} />
+          <PrefsField icon="🚫" label="Brands to Avoid" placeholder="e.g. Shein, Forever 21" value={prefs.avoidBrands} onChange={e => setPrefs(p => ({ ...p, avoidBrands: e.target.value }))} />
         </div>
 
-        <div className="prefs-section">
-          <label>Favorite Stores</label>
-          <input placeholder="e.g. Uniqlo, H&M, Zara" value={prefs.favoriteStores} onChange={e => setPrefs(p => ({ ...p, favoriteStores: e.target.value }))} />
-        </div>
-
-        <div className="prefs-section">
-          <label>Brands to Avoid</label>
-          <input placeholder="e.g. Shein, Forever 21" value={prefs.avoidBrands} onChange={e => setPrefs(p => ({ ...p, avoidBrands: e.target.value }))} />
-        </div>
-
-        <div className="prefs-section">
-          <label>Favorite Colors</label>
-          <input placeholder="e.g. black, navy, white" value={prefs.colors} onChange={e => setPrefs(p => ({ ...p, colors: e.target.value }))} />
-        </div>
-
-        <div className="prefs-section">
-          <label>Other Notes</label>
-          <textarea placeholder="e.g. Prefers cotton, no polyester, likes oversized fits" value={prefs.notes} onChange={e => setPrefs(p => ({ ...p, notes: e.target.value }))} rows={3} />
+        <div className="prefs-card">
+          <div className="prefs-card-title">📝 Anything Else</div>
+          <textarea
+            className="prefs-notes-input"
+            placeholder="e.g. Prefers cotton, no polyester, likes oversized fits, petite frame"
+            value={prefs.notes}
+            onChange={e => setPrefs(p => ({ ...p, notes: e.target.value }))}
+            rows={3}
+          />
         </div>
 
         <button className="prefs-save-btn" onClick={handleSave} disabled={saving}>

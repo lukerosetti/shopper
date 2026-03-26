@@ -110,10 +110,7 @@ body {
 .header-logo {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(255,255,255,0.4);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  object-fit: contain;
 }
 
 .header h1 {
@@ -770,29 +767,31 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  background: var(--bg);
 }
 
 .prefs-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 16px;
+  padding: 16px;
   background: #FFFFFF;
   border-bottom: 1px solid var(--card-border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
 }
 
 .prefs-header h2 {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 800;
 }
 
 .prefs-back, .cart-back {
   background: var(--bg);
-  color: var(--text-dim);
+  color: var(--text);
   border: 1px solid var(--card-border);
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 10px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
@@ -802,22 +801,47 @@ body {
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   flex: 1;
   overflow-y: auto;
 }
 
-.prefs-section label {
-  display: block;
+.prefs-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.prefs-card-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.prefs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prefs-field-label {
   font-size: 12px;
   font-weight: 700;
   color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.prefs-section input, .prefs-section textarea {
+.prefs-field-icon {
+  font-size: 14px;
+}
+
+.prefs-field-input {
   width: 100%;
   background: var(--bg);
   color: var(--text);
@@ -831,24 +855,90 @@ body {
   transition: all 0.2s;
 }
 
-.prefs-section input:focus, .prefs-section textarea:focus {
+.prefs-field-input:focus {
   border-color: var(--accent);
   background: #FFFFFF;
   box-shadow: 0 0 0 3px rgba(232, 168, 124, 0.12);
 }
 
-.prefs-section textarea {
-  resize: vertical;
+.prefs-field-input::placeholder {
+  color: var(--text-dim);
+  font-weight: 400;
 }
 
-.prefs-row {
+.prefs-size-grid {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
-.prefs-row input {
+.prefs-size-item {
   flex: 1;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.prefs-size-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.prefs-size-input {
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 12px 8px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  outline: none;
+  text-align: center;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+.prefs-size-input:focus {
+  border-color: var(--accent);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(232, 168, 124, 0.12);
+}
+
+.prefs-size-input::placeholder {
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.prefs-notes-input {
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  resize: vertical;
+  transition: all 0.2s;
+}
+
+.prefs-notes-input:focus {
+  border-color: var(--accent);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(232, 168, 124, 0.12);
+}
+
+.prefs-notes-input::placeholder {
+  color: var(--text-dim);
+  font-weight: 400;
 }
 
 .prefs-save-btn {
@@ -857,12 +947,12 @@ body {
   color: #FFFFFF;
   border: none;
   border-radius: 14px;
-  padding: 14px;
-  font-size: 14px;
+  padding: 16px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;
-  margin-top: 8px;
+  margin-top: 4px;
   box-shadow: 0 4px 12px rgba(232, 168, 124, 0.25);
   transition: all 0.2s;
 }
@@ -881,6 +971,12 @@ body {
   padding: 40px;
   text-align: center;
   color: var(--text-dim);
+}
+
+@media (max-width: 400px) {
+  .prefs-size-grid {
+    flex-direction: column;
+  }
 }
 
 /* Cart */
@@ -1153,12 +1249,8 @@ body {
   border-color: rgba(212, 128, 106, 0.3);
 }
 
-/* Mobile prefs responsive */
+/* Mobile responsive */
 @media (max-width: 400px) {
-  .prefs-row {
-    flex-direction: column;
-  }
-
   .header h1 {
     font-size: 17px;
   }
