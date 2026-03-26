@@ -1,20 +1,24 @@
 :root {
-  --bg: #0a0f14;
-  --bg2: #0f1a24;
-  --card: #131d28;
-  --card-border: #1e2d3d;
-  --text: #e2e8f0;
-  --text-dim: #8899aa;
-  --cyan: #22d3ee;
-  --cyan-dim: rgba(34, 211, 238, 0.15);
-  --green: #22c55e;
-  --green-dim: rgba(34, 197, 94, 0.15);
-  --purple: #a78bfa;
-  --user-bubble: #1a3a5c;
-  --ai-bubble: #1a2332;
-  --input-bg: #131d28;
-  --input-border: #1e2d3d;
+  --bg: #F5F5F0;
+  --bg2: #1A1A1A;
+  --card: #FFFFFF;
+  --card-border: #E5E5E0;
+  --text: #1A1A1A;
+  --text-dim: #999990;
+  --accent: #7C8C6E;
+  --accent-dim: rgba(124, 140, 110, 0.12);
+  --btn: #3D3D3D;
+  --btn-text: #FFFFFF;
+  --green: #7C8C6E;
+  --green-dim: rgba(124, 140, 110, 0.12);
+  --purple: #7C8C6E;
+  --user-bubble: #3D3D3D;
+  --ai-bubble: #FFFFFF;
+  --input-bg: #FFFFFF;
+  --input-border: #E0E0DB;
   --radius: 12px;
+  --header-text: #FFFFFF;
+  --red: #C45D4D;
 }
 
 * {
@@ -29,6 +33,7 @@ body {
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'kern' 1;
 }
 
 /* App Layout */
@@ -61,14 +66,15 @@ body {
 .header h1 {
   font-size: 20px;
   font-weight: 700;
-  color: var(--text);
+  color: var(--header-text);
+  letter-spacing: -0.3px;
 }
 
 .header-tag {
   font-size: 10px;
   font-weight: 600;
-  color: var(--cyan);
-  background: var(--cyan-dim);
+  color: var(--accent);
+  background: rgba(124, 140, 110, 0.2);
   padding: 2px 6px;
   border-radius: 4px;
   text-transform: uppercase;
@@ -106,7 +112,7 @@ body {
 
 .clear-btn:hover {
   color: var(--text);
-  border-color: var(--cyan);
+  border-color: var(--accent);
 }
 
 /* Chat Area */
@@ -144,7 +150,7 @@ body {
 
 .user-bubble {
   background: var(--user-bubble);
-  color: var(--text);
+  color: #FFFFFF;
   border-bottom-right-radius: 4px;
 }
 
@@ -153,6 +159,7 @@ body {
   color: var(--text);
   border: 1px solid var(--card-border);
   border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
 /* Loading Dots */
@@ -195,15 +202,20 @@ body {
   transition: border-color 0.2s;
 }
 
+.product-card {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
 .product-card:hover {
-  border-color: var(--cyan);
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .product-image {
   width: 100%;
   height: 140px;
   overflow: hidden;
-  background: var(--bg2);
+  background: #ECECEA;
 }
 
 .product-image img {
@@ -247,17 +259,17 @@ body {
   display: inline-block;
   font-size: 13px;
   font-weight: 600;
-  color: var(--cyan);
+  color: #FFFFFF;
   text-decoration: none;
   padding: 6px 12px;
-  background: var(--cyan-dim);
+  background: var(--btn);
   border-radius: 6px;
   transition: all 0.2s;
 }
 
 .product-link:hover {
-  background: var(--cyan);
-  color: var(--bg);
+  background: #2A2A2A;
+  color: #FFFFFF;
 }
 
 /* Input Bar */
@@ -265,7 +277,7 @@ body {
   display: flex;
   gap: 8px;
   padding: 12px 16px;
-  background: var(--bg2);
+  background: #FFFFFF;
   border-top: 1px solid var(--card-border);
   flex-shrink: 0;
 }
@@ -284,7 +296,7 @@ body {
 }
 
 .input-bar input:focus {
-  border-color: var(--cyan);
+  border-color: var(--accent);
 }
 
 .input-bar input::placeholder {
@@ -292,8 +304,8 @@ body {
 }
 
 .send-btn {
-  background: var(--cyan);
-  color: var(--bg);
+  background: var(--accent);
+  color: #FFFFFF;
   border: none;
   border-radius: 10px;
   padding: 10px 16px;
@@ -337,9 +349,9 @@ body {
 
 /* Nav buttons */
 .nav-btn {
-  background: var(--card);
-  color: var(--text-dim);
-  border: 1px solid var(--card-border);
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.15);
   padding: 6px 10px;
   border-radius: 8px;
   font-size: 12px;
@@ -351,16 +363,17 @@ body {
 }
 
 .nav-btn:hover {
-  color: var(--text);
-  border-color: var(--cyan);
+  color: #FFFFFF;
+  border-color: var(--accent);
+  background: rgba(124, 140, 110, 0.25);
 }
 
 .cart-badge {
   position: absolute;
   top: -6px;
   right: -6px;
-  background: var(--cyan);
-  color: var(--bg);
+  background: var(--accent);
+  color: #FFFFFF;
   font-size: 10px;
   font-weight: 700;
   width: 18px;
@@ -382,9 +395,9 @@ body {
 .add-cart-btn {
   font-size: 12px;
   font-weight: 600;
-  color: var(--green);
-  background: var(--green-dim);
-  border: none;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(124, 140, 110, 0.25);
   border-radius: 6px;
   padding: 6px 12px;
   cursor: pointer;
@@ -393,13 +406,15 @@ body {
 }
 
 .add-cart-btn:hover:not(:disabled) {
-  background: var(--green);
-  color: var(--bg);
+  background: var(--accent);
+  color: #FFFFFF;
+  border-color: var(--accent);
 }
 
 .add-cart-btn.added {
-  background: var(--green);
-  color: var(--bg);
+  background: var(--accent);
+  color: #FFFFFF;
+  border-color: var(--accent);
 }
 
 /* Login Screen */
@@ -413,13 +428,14 @@ body {
 }
 
 .login-card {
-  background: var(--bg2);
+  background: #FFFFFF;
   border: 1px solid var(--card-border);
   border-radius: 16px;
   padding: 40px 30px;
   width: 100%;
   max-width: 320px;
   text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
 }
 
 .login-title {
@@ -452,7 +468,7 @@ body {
 }
 
 .login-input:focus {
-  border-color: var(--cyan);
+  border-color: var(--accent);
 }
 
 .login-error {
@@ -463,8 +479,8 @@ body {
 
 .login-btn {
   width: 100%;
-  background: var(--cyan);
-  color: var(--bg);
+  background: var(--btn);
+  color: #FFFFFF;
   border: none;
   border-radius: 10px;
   padding: 12px;
@@ -502,7 +518,7 @@ body {
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  background: var(--bg2);
+  background: #FFFFFF;
   border-bottom: 1px solid var(--card-border);
 }
 
@@ -512,7 +528,7 @@ body {
 }
 
 .prefs-back, .cart-back {
-  background: var(--card);
+  background: var(--bg);
   color: var(--text-dim);
   border: 1px solid var(--card-border);
   padding: 6px 12px;
@@ -556,7 +572,7 @@ body {
 }
 
 .prefs-section input:focus, .prefs-section textarea:focus {
-  border-color: var(--cyan);
+  border-color: var(--accent);
 }
 
 .prefs-section textarea {
@@ -575,8 +591,8 @@ body {
 
 .prefs-save-btn {
   width: 100%;
-  background: var(--cyan);
-  color: var(--bg);
+  background: var(--btn);
+  color: #FFFFFF;
   border: none;
   border-radius: 10px;
   padding: 12px;
@@ -610,7 +626,7 @@ body {
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  background: var(--bg2);
+  background: #FFFFFF;
   border-bottom: 1px solid var(--card-border);
 }
 
@@ -654,7 +670,7 @@ body {
 .cart-item-image {
   width: 80px;
   min-height: 80px;
-  background: var(--bg2);
+  background: #ECECEA;
   flex-shrink: 0;
 }
 
@@ -698,8 +714,8 @@ body {
 .cart-buy-btn {
   font-size: 11px;
   font-weight: 600;
-  color: var(--cyan);
-  background: var(--cyan-dim);
+  color: #FFFFFF;
+  background: var(--btn);
   border-radius: 4px;
   padding: 4px 10px;
   text-decoration: none;
@@ -722,7 +738,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  background: var(--bg2);
+  background: #FFFFFF;
   border-top: 1px solid var(--card-border);
   font-size: 14px;
   font-weight: 600;
