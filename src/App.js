@@ -3,7 +3,7 @@ import Chat from './Chat';
 import Login from './Login';
 import Cart from './Cart';
 import Preferences from './Preferences';
-import { sendMessage, isMockMode, toggleMockMode, validateSession, addToCart, getCart } from './api';
+import { sendMessage, isMockMode, validateSession, addToCart, getCart } from './api';
 
 const WELCOME_MESSAGE = {
   role: 'assistant',
@@ -40,11 +40,6 @@ function App() {
 
   const handleLogin = (token) => {
     setAuthed(true);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('shopperToken');
-    setAuthed(false);
   };
 
   const handleAddToCart = async (product) => {
