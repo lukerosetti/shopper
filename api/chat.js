@@ -1,9 +1,4 @@
-const express = require('express');
-const path = require('path');
 const Anthropic = require('@anthropic-ai/sdk').default;
-
-const app = express();
-app.use(express.json());
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -44,7 +39,11 @@ IMPORTANT RULES:
 - After showing products, ask if they want to refine the search or look at something else
 - Keep responses concise — this is a mobile chat interface`;
 
-app.post('/api/chat', async (req, res) => {
+module.exports = async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
     const { messages } = req.body;
 
@@ -65,15 +64,4 @@ app.post('/api/chat', async (req, res) => {
     console.error('Claude API error:', error.message);
     res.status(500).json({ error: 'Failed to get response from AI' });
   }
-});
-
-// Serve React build in production
-app.use(express.static(path.join(__dirname, 'build')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+};
